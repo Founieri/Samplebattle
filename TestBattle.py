@@ -1,14 +1,4 @@
 import random
-class CharacterClass:
-    isAlly = False
-    def __init__(self, name, isAlly, hp, atk, speed, accuracy):
-        self.name = name
-        self.isAlly = isAlly
-        self.maxHp = hp
-        self.currentHp = hp
-        self.atk = atk
-        self.speed = speed
-        self.accuracy = accuracy
 
 class MoveClass:
     # In battle info
@@ -50,11 +40,33 @@ class MoveClass:
         self.buffEvasionStack = buffEvasionStack
         self.buffSpeedStack = buffSpeedStack
 
+ActiveRedMidAttack = MoveClass("赤中攻撃", True,0,0,0,0,"none", 3, "Red", "opponent", "none",
+1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+
+PassibeRedReAttack = MoveClass("赤再攻撃", False,1,0,0,0,"self", 3, "Red", "opponent", "any",
+0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
 
+class CharacterClass:
+    isAlly = False
+    def __init__(self, name, isAlly:bool, hp:int,
+     resistRed:int, resistBlue:int, resistYellow:int, resistGreen:int,
+     activeSlots, passiveSlots):
+        self.name = name
+        self.isAlly = isAlly
+        self.maxHp = hp
+        self.currentHp = hp
+        self.resistRed = resistRed
+        self.resistBlue = resistBlue
+        self.resistYellow = resistYellow
+        self.resistGreen = resistGreen
+        self.activeSlots = activeSlots
+        self.passiveSlots = passiveSlots
 
-Ally1 = CharacterClass("Pig_A", True, 20, 5, 10, 0.6)
-Enemy1 = CharacterClass("Elder_A", False, 24, 5, 7, 0.5)
+
+Ally1 = CharacterClass("Pig_A", True, 20, 1, 0, 0, 0, ActiveRedMidAttack, PassibeRedReAttack)
+#Enemy1 = CharacterClass("Elder_A", False, 24, 5, 7, 0.5)
+Enemy1 = CharacterClass("Elder_A", False, 24, 0, 0, 0, 0, ActiveRedMidAttack, PassibeRedReAttack)
 character_list = [Ally1, Enemy1]
 current_turn = 1
 
@@ -66,12 +78,13 @@ while True:
     print("")
 
     # Move
-    actionOrderCharacter_list = sorted(character_list, key=lambda CharacterClass: CharacterClass.speed, reverse=True)
+    #actionOrderCharacter_list = sorted(character_list, key=lambda CharacterClass: CharacterClass.speed, reverse=True)
+    actionOrderCharacter_list = character_list # temp, it should be ordered by move-speed.
     for character in actionOrderCharacter_list:
         for target_raw in character_list:
             if target_raw.isAlly != character.isAlly:
                 target = target_raw
-        damage = int(character.atk*random.uniform(0.0 + character.accuracy,1.0))
+        damage = int(character.activeSlots.moveValue - target.resistRed) #*random.uniform(0.0 + character.accuracy,1.0))
         target.currentHp -= damage
         print(character.name + " -> " + target.name + " " + str(damage) + "d" )
 
