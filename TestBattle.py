@@ -112,9 +112,6 @@ while True:
         action = MoveOrderClass(character, character.activeMove, 0)
         actionOrderList.append(action)
 
-    #actionOrderCharacter_list = character_list.copy() # temp, it should be ordered by move-speed.
-
-
     ##[3]Move per character
     #for character in actionOrderCharacter_list:
     while len(actionOrderList) > 0:
@@ -122,10 +119,6 @@ while True:
         for c in character_list:
             if(c.name == actorOrder.actor.name):
                 actorCharacter = c
-
-
-        #print("actionOrder length: " + str(len(actionOrderCharacter_list))
-        #+ " character_list length: " + str(len(character_list)))
         # Target
         if(actorOrder.currentMove.toTarget == "opponent"):
             for target_raw in character_list:
@@ -161,7 +154,6 @@ while True:
             print("  "*actorOrder.chainCount + target.name + " 撃破")
             break
 
-
         #[3-1] Chain Move evaluation
         while True:
             # Priority: (1)Opponent reaction -> (2)Self reaction
@@ -171,13 +163,7 @@ while True:
             and target.passiveCounterAttack.chainReference == "Opponent"):
 
                 if(target.passiveCounterAttack.invocationRate >= random.uniform(0.0, 1.0) ):
-                    #if (target.passiveSlots.canTriggerMultipleInOneTurn == False):
                     reaction = MoveOrderClass(target, target.passiveCounterAttack, actorOrder.chainCount +1)
-                    # c = copy(target)
-                    # c.passiveCounterAttack.canMoveInThisTurn == False
-                    # c.chainCount = target.chainCount + 1
-                    # c.currentMove = c.passiveCounterAttack # It is ugly.
-                    # actionOrderCharacter_list.append(c)
                     actionOrderList.insert(0,reaction)
                     # print("反撃　発動: " + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
                     break
@@ -188,21 +174,12 @@ while True:
             and actorCharacter.passiveReAttack.chainReference == "Self"):
 
                 if(actorCharacter.passiveReAttack.invocationRate >= random.uniform(0.0, 1.0) ):
-                    #if (target.passiveSlots.canTriggerMultipleInOneTurn == False):
                     reaction = MoveOrderClass(actorCharacter, actorCharacter.passiveReAttack, actorOrder.chainCount + 1)
-                    # r = copy(actorCharacter)
-                    # r.passiveReAttack.canMoveInThisTurn == False
-                    # r.chainCount = actorOrder.chainCount + 1 # Reference Self
-                    # r.currentMove = r.passiveReAttack # It is ugly.
                     actionOrderList.insert(0, reaction)
-
                     # print("再攻撃 発動" + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
                     break
             # Chain can trigger only once in the loop. Unlike Guild Story 2.
-
             break
-
-        # Refresh
 
     #[XX] Result evaluation
     if Enemy1.currentHp <= 0:
@@ -218,11 +195,6 @@ while True:
 
     ##[6] Clean up, reset for the next turn.
     current_turn += 1
-    # for character in character_list:
-    #     character.chainCount = 0
-    #     character.passiveCounterAttack.canMoveInThisTurn = True  # It is ugly.
-    #     character.passiveReAttack.canMoveInThisTurn = True  # It is ugly.
-    #     # character.currentMove = character.activeSlots
 
 def battleStruct(actor, target):
     print("in battle Struct")
