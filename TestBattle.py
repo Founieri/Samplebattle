@@ -1,4 +1,5 @@
 import random
+import copy
 
 
 ### Class difinition & cast (temp: now it is mixed)
@@ -44,12 +45,19 @@ class MoveClass:
 
 
 # Cast MoveClass
-ActiveRedMidAttack = MoveClass("攻撃", True,0,0,0,0,"none", -3, "Red", "opponent", "none",
+Pig_ActiveRedMidAttack = MoveClass("攻撃", True,0,0,0,0,"none", -3, "Red", "opponent", "none",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-
-PassibeRedReAttack = MoveClass("反撃", False,1,0,0,0,"self", -5, "Red", "opponent", "any",
+Pig_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "Red", "opponent", "any",
+0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "Red", "opponent", "any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
+Elder_ActiveRedMidAttack = MoveClass("攻撃", True,0,0,0,0,"none", -3, "Red", "opponent", "none",
+1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Elder_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "Red", "opponent", "any",
+0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Elder_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "Red", "opponent", "any",
+0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
 class CharacterClass:
     isAlly = False
@@ -57,7 +65,7 @@ class CharacterClass:
 
     def __init__(self, name, isAlly:bool, hp:int,
      resistRed:int, resistBlue:int, resistYellow:int, resistGreen:int,
-     activeSlots, passiveSlots):
+     activeMove, passiveReAttack, passiveCounterAttack):
         self.name = name
         self.isAlly = isAlly
         self.maxHp = hp
@@ -66,14 +74,21 @@ class CharacterClass:
         self.resistBlue = resistBlue
         self.resistYellow = resistYellow
         self.resistGreen = resistGreen
-        self.activeSlots = activeSlots # Temp; it should be arry.
-        self.passiveSlots = passiveSlots # Temp; it should be arry.
-
-        self.currentMove = activeSlots # temp; it is ugly.
+        self.activeMove = activeMove # Temp; it should be arry.
+        self.passiveReAttack = passiveReAttack # Temp; it should be arry.
+        self.passiveCounterAttack = passiveCounterAttack # Temp; it should be arry.
+        #self.currentMove = activeSlots # temp; it is ugly.
 
 # Cast CharacterClass
-Ally1 = CharacterClass("ピグ", True, 20, 1, 0, 0, 0, ActiveRedMidAttack, PassibeRedReAttack)
-Enemy1 = CharacterClass("エルダー", False, 24, 0, 0, 0, 0, ActiveRedMidAttack, PassibeRedReAttack)
+Ally1 = CharacterClass("ピグ", True, 20, 1, 0, 0, 0, Pig_ActiveRedMidAttack, Pig_PassiveRedReAttack, Pig_PassiveRedCounterAttack)
+Enemy1 = CharacterClass("エルダー", False, 24, 0, 0, 0, 0, Elder_ActiveRedMidAttack, Elder_PassiveRedReAttack, Elder_PassiveRedCounterAttack)
+
+class MoveOrderClass:
+    def __init__(self, actor, currentMove, chainCount:int):
+        self.actor = actor
+        self.currentMove = currentMove
+        self.chainCount = chainCount
+
 
 character_list = [Ally1, Enemy1]
 
@@ -92,22 +107,32 @@ while True:
 
     ##[2] Move Order calculation
     #actionOrderCharacter_list = sorted(character_list, key=lambda CharacterClass: CharacterClass.speed, reverse=True)
-    actionOrderCharacter_list = character_list.copy() # temp, it should be ordered by move-speed.
+    actionOrderList = []
+    for character in character_list:
+        action = MoveOrderClass(character, character.activeMove, 0)
+        actionOrderList.append(action)
+
+    #actionOrderCharacter_list = character_list.copy() # temp, it should be ordered by move-speed.
 
 
     ##[3]Move per character
     #for character in actionOrderCharacter_list:
-    while len(actionOrderCharacter_list) > 0:
-        character = actionOrderCharacter_list.pop(0)
+    while len(actionOrderList) > 0:
+        actorOrder = actionOrderList.pop(0)
+        for c in character_list:
+            if(c.name == actorOrder.actor.name):
+                actorCharacter = c
+
+
         #print("actionOrder length: " + str(len(actionOrderCharacter_list))
         #+ " character_list length: " + str(len(character_list)))
         # Target
-        if(character.currentMove.toTarget == "opponent"):
+        if(actorOrder.currentMove.toTarget == "opponent"):
             for target_raw in character_list:
-                if target_raw.isAlly != character.isAlly:
+                if target_raw.isAlly != actorCharacter.isAlly:
                     target = target_raw
-        elif(character.currentMove.toTarget == "self"):
-            target = character
+        elif(actorOrder.currentMove.toTarget == "self"):
+            target = actorCharacter
 
         #[3-1] buff move
 
@@ -117,42 +142,67 @@ while True:
 
         # target resist calculation
         targetResistValue = 0
-        if (character.currentMove.moveElement == "Red"):
+        if (actorOrder.currentMove.moveElement == "Red"):
             targetResistValue = target.resistRed
-        if (character.currentMove.moveElement == "Blue"):
+        if (actorOrder.currentMove.moveElement == "Blue"):
             targetResistValue = target.resistBlue
-        if (character.currentMove.moveElement == "Yellow"):
+        if (actorOrder.currentMove.moveElement == "Yellow"):
             targetResistValue = target.resistYellow
-        if (character.currentMove.moveElement == "Green"):
+        if (actorOrder.currentMove.moveElement == "Green"):
             targetResistValue = target.resistGreen
 
 
-        dealValue = int(character.currentMove.moveValue + targetResistValue) #*random.uniform(0.0 + character.accuracy,1.0))
+        dealValue = int(actorOrder.currentMove.moveValue + targetResistValue) #*random.uniform(0.0 + character.accuracy,1.0))
         target.currentHp += dealValue
-        print("  "*character.chainCount + "["+character.currentMove.name + "] " + character.name + " -> " + target.name + " " + str(dealValue) + "d" )
+        print("  "*actorOrder.chainCount + "["+actorOrder.currentMove.name + "] " + actorOrder.actor.name + " -> " + target.name + " " + str(dealValue) + "d" )
 
         #[XX] Result evaluation
         if target.currentHp <= 0:
-            print(" "*character.chainCount + target.name + " 撃破")
+            print("  "*actorOrder.chainCount + target.name + " 撃破")
             break
 
 
         #[3-1] Chain Move evaluation
-        # Priority: (1)opponent reaction -> (2)self reaction
-        if(target.passiveSlots.canMoveInThisTurn and target.passiveSlots.isActiveMove == False):
+        while True:
+            # Priority: (1)Opponent reaction -> (2)Self reaction
+            # (1) Opponent reaction
+            # chainReference = Opponent should work
+            if(target.passiveCounterAttack.canMoveInThisTurn and target.passiveCounterAttack.isActiveMove == False
+            and target.passiveCounterAttack.chainReference == "Opponent"):
 
-            if(target.passiveSlots.invocationRate >= random.uniform(0.0, 1.0) ):
-                #if (target.passiveSlots.canTriggerMultipleInOneTurn == False):
-                target.passiveSlots.canMoveInThisTurn == False
-                target.chainCount = character.chainCount + 1
-                target.currentMove = target.passiveSlots # It is ugly.
-                actionOrderCharacter_list.append(target)
+                if(target.passiveCounterAttack.invocationRate >= random.uniform(0.0, 1.0) ):
+                    #if (target.passiveSlots.canTriggerMultipleInOneTurn == False):
+                    reaction = MoveOrderClass(target, target.passiveCounterAttack, actorOrder.chainCount +1)
+                    # c = copy(target)
+                    # c.passiveCounterAttack.canMoveInThisTurn == False
+                    # c.chainCount = target.chainCount + 1
+                    # c.currentMove = c.passiveCounterAttack # It is ugly.
+                    # actionOrderCharacter_list.append(c)
+                    actionOrderList.insert(0,reaction)
+                    # print("反撃　発動: " + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
+                    break
 
-        # Chain can trigger only once in the loop. Unlike Guild Story 2.
+            # (2)Self reaction
+            # chainReference = Self should work
+            if(actorCharacter.passiveReAttack.canMoveInThisTurn and actorCharacter.passiveReAttack.isActiveMove == False
+            and actorCharacter.passiveReAttack.chainReference == "Self"):
+
+                if(actorCharacter.passiveReAttack.invocationRate >= random.uniform(0.0, 1.0) ):
+                    #if (target.passiveSlots.canTriggerMultipleInOneTurn == False):
+                    reaction = MoveOrderClass(actorCharacter, actorCharacter.passiveReAttack, actorOrder.chainCount + 1)
+                    # r = copy(actorCharacter)
+                    # r.passiveReAttack.canMoveInThisTurn == False
+                    # r.chainCount = actorOrder.chainCount + 1 # Reference Self
+                    # r.currentMove = r.passiveReAttack # It is ugly.
+                    actionOrderList.insert(0, reaction)
+
+                    # print("再攻撃 発動" + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
+                    break
+            # Chain can trigger only once in the loop. Unlike Guild Story 2.
+
+            break
 
         # Refresh
-        character.chainCount = 0
-        character.currentMove = character.activeSlots
 
     #[XX] Result evaluation
     if Enemy1.currentHp <= 0:
@@ -168,10 +218,11 @@ while True:
 
     ##[6] Clean up, reset for the next turn.
     current_turn += 1
-    for character in character_list:
-        character.chainCount = 0
-        character.passiveSlots.canMoveInThisTurn = True  # It is ugly.
-        character.currentMove = character.activeSlots
+    # for character in character_list:
+    #     character.chainCount = 0
+    #     character.passiveCounterAttack.canMoveInThisTurn = True  # It is ugly.
+    #     character.passiveReAttack.canMoveInThisTurn = True  # It is ugly.
+    #     # character.currentMove = character.activeSlots
 
 def battleStruct(actor, target):
     print("in battle Struct")
