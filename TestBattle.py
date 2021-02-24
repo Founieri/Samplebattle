@@ -208,16 +208,22 @@ while (battleCount < 1000):
             elif(actorOrder.currentMove.moveValue >= 0):
                 dealValue = int(actorOrder.currentMove.moveValue)
 
+
             target.currentHp += dealValue
             battleText = ""
-            if(dealValue != 0):
-                battleText += str(dealValue) + "d "
+            if (actorOrder.currentMove.moveValue != 0):
+                if(dealValue < 0):
+                    battleText += str(dealValue) + " ダメージ "
+                elif(dealValue > 0):
+                    battleText += str(dealValue) + " 回復 "
+                else:
+                    battleText += " 防がれた！ "
             if(targetResistStack != 0):
                 battleText += "耐久値(" + str(targetResistStack) + ")"
 
 
             print("  "*actorOrder.chainCount + "["+actorOrder.currentMove.name + "] " + actorOrder.actor.name
-            + " -> " + target.name + " " + battleText + buffText )
+            + " -> " + target.name + "  " + battleText + buffText )
 
             #[XX] Result evaluation
             if target.currentHp <= 0:
@@ -274,4 +280,4 @@ while (battleCount < 1000):
 
     battleCount += 1
 
-print("win-Ratio: " + str(winCount) + "/" + str(battleCount) + " draw: " + str(drawCount))
+print("勝率: " + str(winCount) + "/" + str(battleCount) + " 引分: " + str(drawCount))
