@@ -26,7 +26,7 @@ class MoveClass:
         self.chainReference = chainReference # whitch move type trigger this move in reaction
         self.moveValue = moveValue # 0: non offence nor heal move. >= +1: heal toTarget. <= -1: attack toTarget.
         self.moveElement = moveElement # Red, Blue, Yellow, Green
-        self.toTarget = toTarget # "self" or "opponent"  note: now only limited 1 vs 1.
+        self.toTarget = toTarget # "Self" or "Opponent"  note: now only limited 1 vs 1.
         self.whatTrigger = whatTrigger #
         self.invocationRate = invocationRate  # 0.0 ~ 1.0
         self.canTriggerMultipleInOneTurn = canTriggerMultipleInOneTurn  # boolean
@@ -45,27 +45,38 @@ class MoveClass:
 
 
 # Cast MoveClass
-Pig_ActiveRedMidAttack = MoveClass("攻撃", True,0,0,0,0,"none", -3, "Red", "opponent", "none",
+Pig_ActiveMove1 = MoveClass("攻撃", True,0,0,0,0,"None", -3, "Red", "Opponent", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "Red", "opponent", "any",
+Pig_ActiveMove2 = MoveClass("回復", True,0,0,0,0,"None", +3, "Red", "Self", "None",
+1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_ActiveMove3 = MoveClass("攻撃大", True,0,0,0,0,"None", -5, "Red", "Opponent", "None",
+1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "Red", "Opponent", "Any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "Red", "opponent", "any",
+Pig_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "Red", "Opponent", "Any",
 0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
-Elder_ActiveRedMidAttack = MoveClass("攻撃", True,0,0,0,0,"none", -3, "Red", "opponent", "none",
+Elder_ActiveMove1 = MoveClass("攻撃", True,0,0,0,0,"None", -3, "Red", "Opponent", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Elder_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "Red", "opponent", "any",
+Elder_ActiveMove2 = MoveClass("防御", True,0,0,0,0,"none", 0, "Red", "Self", "None",
+1.0, False, 20, 0,0,0,0,3,0,0,0,0,0,0 )
+Elder_ActiveMove3 = MoveClass("攻撃大", True,0,0,0,0,"none", -5, "Red", "Opponent", "None",
+1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Elder_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "Red", "Opponent", "Any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Elder_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "Red", "opponent", "any",
+Elder_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "Red", "Opponent", "Any",
 0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
 class CharacterClass:
     isAlly = False
     chainCount = 0
 
+    resistRedStack = 0
+
+
     def __init__(self, name, isAlly:bool, hp:int,
      resistRed:int, resistBlue:int, resistYellow:int, resistGreen:int,
-     activeMove1, passiveReAttack, passiveCounterAttack):
+     activeMove1,activeMove2,activeMove3, passiveReAttack, passiveCounterAttack):
         self.name = name
         self.isAlly = isAlly
         self.maxHp = hp
@@ -74,14 +85,18 @@ class CharacterClass:
         self.resistBlue = resistBlue
         self.resistYellow = resistYellow
         self.resistGreen = resistGreen
-        self.activeMove1 = activeMove1 # Temp; it should be arry.
+        self.activeMove1 = activeMove1 # Temp
+        self.activeMove2 = activeMove2 # Temp
+        self.activeMove3 = activeMove3 # Temp
         self.passiveReAttack = passiveReAttack # Temp; it should be arry.
         self.passiveCounterAttack = passiveCounterAttack # Temp; it should be arry.
         #self.currentMove = activeSlots # temp; it is ugly.
 
 # Cast CharacterClass
-Ally1 = CharacterClass("ピグ", True, 20, 1, 0, 0, 0, Pig_ActiveRedMidAttack, Pig_PassiveRedReAttack, Pig_PassiveRedCounterAttack)
-Enemy1 = CharacterClass("エルダー", False, 24, 0, 0, 0, 0, Elder_ActiveRedMidAttack, Elder_PassiveRedReAttack, Elder_PassiveRedCounterAttack)
+Ally1 = CharacterClass("ピグ", True, 20, 1, 0, 0, 0, Pig_ActiveMove1,Pig_ActiveMove2,Pig_ActiveMove3,
+ Pig_PassiveRedReAttack, Pig_PassiveRedCounterAttack)
+Enemy1 = CharacterClass("エルダー", False, 24, 0, 0, 0, 0, Elder_ActiveMove1, Elder_ActiveMove2, Elder_ActiveMove3,
+ Elder_PassiveRedReAttack, Elder_PassiveRedCounterAttack)
 
 class MoveOrderClass:
     def __init__(self, actor, currentMove, chainCount:int):
@@ -108,8 +123,20 @@ while True:
     ##[2] Move Order calculation
     #actionOrderCharacter_list = sorted(character_list, key=lambda CharacterClass: CharacterClass.speed, reverse=True)
     actionOrderList = []
+
+    # temp move1
     for character in character_list:
         action = MoveOrderClass(character, character.activeMove1, 0)
+        actionOrderList.append(action)
+
+    # temp move2
+    for character in character_list:
+        action = MoveOrderClass(character, character.activeMove2, 0)
+        actionOrderList.append(action)
+
+    # temp move3
+    for character in character_list:
+        action = MoveOrderClass(character, character.activeMove3, 0)
         actionOrderList.append(action)
 
     ##[3]Move per character
@@ -120,34 +147,67 @@ while True:
             if(c.name == actorOrder.actor.name):
                 actorCharacter = c
         # Target
-        if(actorOrder.currentMove.toTarget == "opponent"):
+        if(actorOrder.currentMove.toTarget == "Opponent"):
             for target_raw in character_list:
                 if target_raw.isAlly != actorCharacter.isAlly:
                     target = target_raw
-        elif(actorOrder.currentMove.toTarget == "self"):
+        elif(actorOrder.currentMove.toTarget == "Self"):
             target = actorCharacter
 
         #[3-1] buff move
-
+        buffText = ""
+        if (actorOrder.currentMove.buffDefenceRedStack != 0):
+            if(actorOrder.currentMove.toTarget == "Opponent"):
+                target.resistRedStack += actorOrder.currentMove.buffDefenceRedStack
+                buffText = "耐久弱化: " +  str(actorOrder.currentMove.buffDefenceRedStack)
+            elif(actorOrder.currentMove.toTarget == "Self"):
+                actorCharacter.resistRedStack += actorOrder.currentMove.buffDefenceRedStack
+                buffText = "耐久強化: +" + str(actorOrder.currentMove.buffDefenceRedStack)
 
         #[3-2] deal move
         # deal means, damage or heal to Target
 
-        # target resist calculation
-        targetResistValue = 0
-        if (actorOrder.currentMove.moveElement == "Red"):
-            targetResistValue = target.resistRed
-        if (actorOrder.currentMove.moveElement == "Blue"):
-            targetResistValue = target.resistBlue
-        if (actorOrder.currentMove.moveElement == "Yellow"):
-            targetResistValue = target.resistYellow
-        if (actorOrder.currentMove.moveElement == "Green"):
-            targetResistValue = target.resistGreen
 
 
-        dealValue = int(actorOrder.currentMove.moveValue + targetResistValue) #*random.uniform(0.0 + character.accuracy,1.0))
+        # Offence
+        if (actorOrder.currentMove.moveValue < 0):
+            # target resist calculation
+            targetResistValue = 0
+            targetResistStack = 0
+            if (actorOrder.currentMove.moveElement == "Red"):
+                targetResistValue = target.resistRed + target.resistRedStack
+                targetResistStack = target.resistRedStack
+                if(target.resistRedStack > 0):
+                    target.resistRedStack -= 1
+                elif(target.resistRedStack < 0):
+                    target.resistRedStack += 1
+            if (actorOrder.currentMove.moveElement == "Blue"):
+                targetResistValue = target.resistBlue
+            if (actorOrder.currentMove.moveElement == "Yellow"):
+                targetResistValue = target.resistYellow
+            if (actorOrder.currentMove.moveElement == "Green"):
+                targetResistValue = target.resistGreen
+
+            # calculate dealValue
+            if(actorOrder.currentMove.moveValue + targetResistValue > 0):
+                dealValue = 0
+            else:
+                dealValue = int(actorOrder.currentMove.moveValue + targetResistValue)
+
+        # not offence move, not consider resist value.
+        elif(actorOrder.currentMove.moveValue >= 0):
+            dealValue = int(actorOrder.currentMove.moveValue)
+
         target.currentHp += dealValue
-        print("  "*actorOrder.chainCount + "["+actorOrder.currentMove.name + "] " + actorOrder.actor.name + " -> " + target.name + " " + str(dealValue) + "d" )
+        battleText = ""
+        if(dealValue != 0):
+            battleText += str(dealValue) + "d "
+        if(targetResistStack != 0):
+            battleText += "耐久値(" + str(targetResistStack) + ")"
+
+
+        print("  "*actorOrder.chainCount + "["+actorOrder.currentMove.name + "] " + actorOrder.actor.name
+        + " -> " + target.name + " " + battleText + buffText )
 
         #[XX] Result evaluation
         if target.currentHp <= 0:
@@ -198,6 +258,8 @@ while True:
 
     ##[6] Clean up, reset for the next turn.
     current_turn += 1
+    for character in character_list:
+        character.resistRedStack = 0
 
 def battleStruct(actor, target):
     print("in battle Struct")
