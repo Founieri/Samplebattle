@@ -50,14 +50,14 @@ Pig_ActiveRedMidAttack = MoveClass("攻撃", True,0,0,0,0,"none", -3, "Red", "op
 Pig_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "Red", "opponent", "any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 Pig_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "Red", "opponent", "any",
-0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
 Elder_ActiveRedMidAttack = MoveClass("攻撃", True,0,0,0,0,"none", -3, "Red", "opponent", "none",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 Elder_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "Red", "opponent", "any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 Elder_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "Red", "opponent", "any",
-0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
 class CharacterClass:
     isAlly = False
@@ -65,7 +65,7 @@ class CharacterClass:
 
     def __init__(self, name, isAlly:bool, hp:int,
      resistRed:int, resistBlue:int, resistYellow:int, resistGreen:int,
-     activeMove, passiveReAttack, passiveCounterAttack):
+     activeMove1, passiveReAttack, passiveCounterAttack):
         self.name = name
         self.isAlly = isAlly
         self.maxHp = hp
@@ -74,7 +74,7 @@ class CharacterClass:
         self.resistBlue = resistBlue
         self.resistYellow = resistYellow
         self.resistGreen = resistGreen
-        self.activeMove = activeMove # Temp; it should be arry.
+        self.activeMove1 = activeMove1 # Temp; it should be arry.
         self.passiveReAttack = passiveReAttack # Temp; it should be arry.
         self.passiveCounterAttack = passiveCounterAttack # Temp; it should be arry.
         #self.currentMove = activeSlots # temp; it is ugly.
@@ -109,7 +109,7 @@ while True:
     #actionOrderCharacter_list = sorted(character_list, key=lambda CharacterClass: CharacterClass.speed, reverse=True)
     actionOrderList = []
     for character in character_list:
-        action = MoveOrderClass(character, character.activeMove, 0)
+        action = MoveOrderClass(character, character.activeMove1, 0)
         actionOrderList.append(action)
 
     ##[3]Move per character
@@ -163,6 +163,8 @@ while True:
             and target.passiveCounterAttack.chainReference == "Opponent"):
 
                 if(target.passiveCounterAttack.invocationRate >= random.uniform(0.0, 1.0) ):
+                    if(target.passiveCounterAttack.canTriggerMultipleInOneTurn == False):
+                        target.passiveCounterAttack.canMoveInThisTurn = False
                     reaction = MoveOrderClass(target, target.passiveCounterAttack, actorOrder.chainCount +1)
                     actionOrderList.insert(0,reaction)
                     # print("反撃　発動: " + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
@@ -172,7 +174,8 @@ while True:
             # chainReference = Self should work
             if(actorCharacter.passiveReAttack.canMoveInThisTurn and actorCharacter.passiveReAttack.isActiveMove == False
             and actorCharacter.passiveReAttack.chainReference == "Self"):
-
+                if(target.passiveReAttack.canTriggerMultipleInOneTurn == False):
+                    target.passiveReAttack.canMoveInThisTurn = False
                 if(actorCharacter.passiveReAttack.invocationRate >= random.uniform(0.0, 1.0) ):
                     reaction = MoveOrderClass(actorCharacter, actorCharacter.passiveReAttack, actorOrder.chainCount + 1)
                     actionOrderList.insert(0, reaction)
