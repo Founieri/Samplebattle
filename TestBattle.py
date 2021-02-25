@@ -10,7 +10,7 @@ class MoveClass:
 
     # Preset infomation, Move master.
     def __init__(self, name, isActiveMove:bool,
-     chainElementRed:int,chainElementBlue:int,chainElementYellow:int,chainElementGreen:int,
+     chainTriggerElementRed:int,chainTriggerElementBlue:int,chainTriggerElementYellow:int,chainTriggerElementGreen:int,
      chainReference, moveValue:int, moveElement, toTarget, whatTrigger,
      invocationRate:float, canTriggerMultipleInOneTurn:bool, numberOfPossibleMoves:int,
      buffOffenceRedStack:int, buffOffenceBlueStack:int, buffOffenceYellowStack:int, buffOffenceGreenStack:int,
@@ -19,13 +19,13 @@ class MoveClass:
      ):
         self.name = name # Name of move
         self.isActiveMove = isActiveMove    # true:"active" or false:"passive"
-        self.chainElementRed = chainElementRed
-        self.chainElementBlue = chainElementBlue
-        self.chainElementYellow = chainElementYellow
-        self.chainElementGreen = chainElementGreen
+        self.chainTriggerElementRed = chainTriggerElementRed
+        self.chainTriggerElementBlue = chainTriggerElementBlue
+        self.chainTriggerElementYellow = chainTriggerElementYellow
+        self.chainTriggerElementGreen = chainTriggerElementGreen
         self.chainReference = chainReference # whitch move type trigger this move in reaction
         self.moveValue = moveValue # 0: non offence nor heal move. >= +1: heal toTarget. <= -1: attack toTarget.
-        self.moveElement = moveElement # Red, Blue, Yellow, Green
+        self.moveElement = moveElement # 赤, 青, 黄, 緑
         self.toTarget = toTarget # "Self" or "Opponent"  note: now only limited 1 vs 1.
         self.whatTrigger = whatTrigger #
         self.invocationRate = invocationRate  # 0.0 ~ 1.0
@@ -45,26 +45,26 @@ class MoveClass:
 
 
 # Cast MoveClass
-Pig_ActiveMove1 = MoveClass("攻撃中", True,0,0,0,0,"None", -3, "Red", "Opponent", "None",
+Pig_ActiveMove1 = MoveClass("攻撃中", True,0,0,0,0,"None", -3, "赤", "Opponent", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_ActiveMove2 = MoveClass("回復", True,0,0,0,0,"None", +3, "Red", "Self", "None",
+Pig_ActiveMove2 = MoveClass("回復", True,0,0,0,0,"None", +3, "緑", "Self", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_ActiveMove3 = MoveClass("攻撃大", True,0,0,0,0,"None", -5, "Red", "Opponent", "None",
+Pig_ActiveMove3 = MoveClass("攻撃大", True,0,0,0,0,"None", -5, "赤", "Opponent", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "Red", "Opponent", "Any",
+Pig_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "赤", "Opponent", "Any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "Red", "Opponent", "Any",
+Pig_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
 0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
-Elder_ActiveMove1 = MoveClass("攻撃中", True,0,0,0,0,"None", -3, "Red", "Opponent", "None",
+Elder_ActiveMove1 = MoveClass("攻撃中", True,0,0,0,0,"None", -3, "赤", "Opponent", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Elder_ActiveMove2 = MoveClass("防御", True,0,0,0,0,"none", 0, "Red", "Self", "None",
+Elder_ActiveMove2 = MoveClass("防御", True,0,0,0,0,"none", 0, "黄", "Self", "None",
 1.0, False, 20, 0,0,0,0,3,0,0,0,0,0,0 )
-Elder_ActiveMove3 = MoveClass("攻撃大", True,0,0,0,0,"none", -5, "Red", "Opponent", "None",
+Elder_ActiveMove3 = MoveClass("攻撃大", True,0,0,0,0,"none", -5, "赤", "Opponent", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Elder_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "Red", "Opponent", "Any",
+Elder_PassiveRedCounterAttack = MoveClass("反撃", False,1,0,0,0,"Opponent", -5, "赤", "Opponent", "Any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Elder_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "Red", "Opponent", "Any",
+Elder_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
 0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
 class CharacterClass:
@@ -99,10 +99,17 @@ Enemy1 = CharacterClass("エルダー", False, 30, 0, 0, 0, 0, Elder_ActiveMove1
  Elder_PassiveRedReAttack, Elder_PassiveRedCounterAttack)
 
 class MoveOrderClass:
-    def __init__(self, actor, currentMove, chainCount:int):
+    def __init__(self, actor, currentMove, chainCount:int, isInitialMove:bool):
         self.actor = actor
         self.currentMove = currentMove
         self.chainCount = chainCount
+        self.isInitialMove = isInitialMove
+
+class TurnChainCountClass:
+    chainRedStack = 0
+    chainBlueStack = 0
+    chainYellowStack = 0
+    chainGreenStack = 0
 
 
 character_list = [Ally1, Enemy1]
@@ -115,7 +122,7 @@ battleCount = 0
 winCount = 0
 drawCount = 0
 
-while (battleCount < 1000):
+while (battleCount < 1):
     # setup, clean
     current_turn = 1
     for character in character_list:
@@ -130,27 +137,34 @@ while (battleCount < 1000):
             print(character.name + " Hp: " + str(character.currentHp) + "/ " + str(character.maxHp))
         print("")
 
+        ## Clear up chain element in Turn phase
+        for character in character_list:
+            character.passiveCounterAttack.canMoveInThisTurn = True
+            character.passiveReAttack.canMoveInThisTurn = True
+
         ##[2] Move Order calculation
         #actionOrderCharacter_list = sorted(character_list, key=lambda CharacterClass: CharacterClass.speed, reverse=True)
         actionOrderList = []
 
         # temp move1
         for character in character_list:
-            action = MoveOrderClass(character, character.activeMove1, 0)
+            action = MoveOrderClass(character, character.activeMove1, 0, True)
             actionOrderList.append(action)
 
         # temp move2
         for character in character_list:
-            action = MoveOrderClass(character, character.activeMove2, 0)
+            action = MoveOrderClass(character, character.activeMove2, 0, True)
             actionOrderList.append(action)
 
         # temp move3
         for character in character_list:
-            action = MoveOrderClass(character, character.activeMove3, 0)
+            action = MoveOrderClass(character, character.activeMove3, 0, True)
             actionOrderList.append(action)
 
         ##[3]Move per character
         #for character in actionOrderCharacter_list:
+        turnChainCount = TurnChainCountClass()
+
         while len(actionOrderList) > 0:
             actorOrder = actionOrderList.pop(0)
             for c in character_list:
@@ -163,6 +177,13 @@ while (battleCount < 1000):
                         target = target_raw
             elif(actorOrder.currentMove.toTarget == "Self"):
                 target = actorCharacter
+
+            # Clear up statistic infomation
+            if(actorOrder.isInitialMove == True):
+                turnChainCount.chainRedStack = 0
+                turnChainCount.chainBlueStack = 0
+                turnChainCount.chainYellowStack = 0
+                turnChainCount.chainGreenStack = 0
 
             #[3-1] buff move
             buffText = ""
@@ -184,18 +205,18 @@ while (battleCount < 1000):
                 # target resist calculation
                 targetResistValue = 0
                 targetResistStack = 0
-                if (actorOrder.currentMove.moveElement == "Red"):
+                if (actorOrder.currentMove.moveElement == "赤"):
                     targetResistValue = target.resistRed + target.resistRedStack
                     targetResistStack = target.resistRedStack
                     if(target.resistRedStack > 0):
                         target.resistRedStack -= 1
                     elif(target.resistRedStack < 0):
                         target.resistRedStack += 1
-                if (actorOrder.currentMove.moveElement == "Blue"):
+                if (actorOrder.currentMove.moveElement == "青"):
                     targetResistValue = target.resistBlue
-                if (actorOrder.currentMove.moveElement == "Yellow"):
+                if (actorOrder.currentMove.moveElement == "黄"):
                     targetResistValue = target.resistYellow
-                if (actorOrder.currentMove.moveElement == "Green"):
+                if (actorOrder.currentMove.moveElement == "緑"):
                     targetResistValue = target.resistGreen
 
                 # calculate dealValue
@@ -218,17 +239,31 @@ while (battleCount < 1000):
                     battleText += str(dealValue) + " 回復 "
                 else:
                     battleText += " 防がれた！ "
-            if(targetResistStack != 0):
-                battleText += "耐久値(" + str(targetResistStack) + ")"
+                if(targetResistStack != 0):
+                    battleText += "耐久値(" + str(targetResistStack) + ") "
 
+            elementText = "[" + actorOrder.currentMove.moveElement + "]"
 
-            print("  "*actorOrder.chainCount + "["+actorOrder.currentMove.name + "] " + actorOrder.actor.name
-            + " -> " + target.name + "  " + battleText + buffText )
+            # for # DEBUG:
+            #debugText = " (" + str(turnChainCount.chainRedStack) + "/" + str(turnChainCount.chainBlueStack)+ "/" + str(turnChainCount.chainYellowStack)+ "/" + str(turnChainCount.chainGreenStack) + ")"
+
+            print("  "*actorOrder.chainCount + elementText + " -"+actorOrder.currentMove.name + "- " + actorOrder.actor.name
+            + " -> " + target.name + "  " + battleText + buffText  )
 
             #[XX] Result evaluation
             if target.currentHp <= 0:
                 print("  "*actorOrder.chainCount + target.name + " 撃破")
                 break
+
+            # add statistic infomation
+            if(actorOrder.currentMove.moveElement == "赤"):
+                turnChainCount.chainRedStack += 1
+            if(actorOrder.currentMove.moveElement == "青"):
+                turnChainCount.chainBlueStack += 1
+            if(actorOrder.currentMove.moveElement == "黄"):
+                turnChainCount.chainYellowStack += 1
+            if(actorOrder.currentMove.moveElement == "緑"):
+                turnChainCount.chainGreenStack += 1
 
             #[3-1] Chain Move evaluation
             while True:
@@ -236,12 +271,16 @@ while (battleCount < 1000):
                 # (1) Opponent reaction
                 # chainReference = Opponent should work
                 if(target.passiveCounterAttack.canMoveInThisTurn and target.passiveCounterAttack.isActiveMove == False
-                and target.passiveCounterAttack.chainReference == "Opponent"):
-
+                and target.passiveCounterAttack.chainReference == "Opponent"
+                and target.passiveCounterAttack.chainTriggerElementRed <= turnChainCount.chainRedStack
+                and target.passiveCounterAttack.chainTriggerElementBlue <= turnChainCount.chainBlueStack
+                and target.passiveCounterAttack.chainTriggerElementYellow <= turnChainCount.chainYellowStack
+                and target.passiveCounterAttack.chainTriggerElementGreen <= turnChainCount.chainGreenStack
+                ):
                     if(target.passiveCounterAttack.invocationRate >= random.uniform(0.0, 1.0) ):
                         if(target.passiveCounterAttack.canTriggerMultipleInOneTurn == False):
                             target.passiveCounterAttack.canMoveInThisTurn = False
-                        reaction = MoveOrderClass(target, target.passiveCounterAttack, actorOrder.chainCount +1)
+                        reaction = MoveOrderClass(target, target.passiveCounterAttack, actorOrder.chainCount +1, False)
                         actionOrderList.insert(0,reaction)
                         # print("反撃　発動: " + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
                         break
@@ -249,11 +288,16 @@ while (battleCount < 1000):
                 # (2)Self reaction
                 # chainReference = Self should work
                 if(actorCharacter.passiveReAttack.canMoveInThisTurn and actorCharacter.passiveReAttack.isActiveMove == False
-                and actorCharacter.passiveReAttack.chainReference == "Self"):
+                and actorCharacter.passiveReAttack.chainReference == "Self"
+                and target.passiveCounterAttack.chainTriggerElementRed <= turnChainCount.chainRedStack
+                and target.passiveCounterAttack.chainTriggerElementBlue <= turnChainCount.chainBlueStack
+                and target.passiveCounterAttack.chainTriggerElementYellow <= turnChainCount.chainYellowStack
+                and target.passiveCounterAttack.chainTriggerElementGreen <= turnChainCount.chainGreenStack
+                ):
                     if(target.passiveReAttack.canTriggerMultipleInOneTurn == False):
                         target.passiveReAttack.canMoveInThisTurn = False
                     if(actorCharacter.passiveReAttack.invocationRate >= random.uniform(0.0, 1.0) ):
-                        reaction = MoveOrderClass(actorCharacter, actorCharacter.passiveReAttack, actorOrder.chainCount + 1)
+                        reaction = MoveOrderClass(actorCharacter, actorCharacter.passiveReAttack, actorOrder.chainCount + 1, False)
                         actionOrderList.insert(0, reaction)
                         # print("再攻撃 発動" + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
                         break
@@ -275,8 +319,8 @@ while (battleCount < 1000):
 
         ##[6] Clean up, reset for the next turn.
         current_turn += 1
-        for character in character_list:
-            character.resistRedStack = 0
+        # for character in character_list:
+            # character.resistRedStack = 0
 
     battleCount += 1
 
