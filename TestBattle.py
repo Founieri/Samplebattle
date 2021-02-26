@@ -1,6 +1,34 @@
 import random
 import copy
 
+# https://gist.github.com/vratiu/9780109
+class bcolors:
+    header = '\033[95m'
+    black = '\033[30m'
+    red = '\033[31m'
+    blue = '\033[34m'
+    purple = '\033[94m'
+    cyan = '\033[96m'
+    green = '\033[92m'
+    yellow = '\033[93m'
+    lightred = '\033[91m'
+    endc = '\033[0m'
+    bold = '\033[1m'
+    gray = '\033[2m'
+    underline = '\033[4m'
+    reverse = '\033[7m'
+    ##TEST = "\033[39m"
+
+    bg_black='\033[40m'
+    bg_darkred='\033[41m'
+    bg_red='\033[101m'
+
+    bg_green='\033[42m'
+    bg_orange='\033[43m'
+    bg_blue='\033[44m'
+    bg_purple='\033[45m'
+    bg_cyan='\033[46m'
+    bg_lightgrey='\033[47m'
 
 ### Class difinition & cast (temp: now it is mixed)
 class MoveClass:
@@ -131,14 +159,14 @@ class TurnChainCountClass:
 character_list = [Ally1, Enemy1]
 
 ### Environment value difinition
-separatorLineText = "***************** \n"
+separatorLineText = bcolors.underline +  "                 \n" + bcolors.endc
 
 ### Battle routine
 battleCount = 0
 winCount = 0
 drawCount = 0
 
-while (battleCount < 100):
+while (battleCount < 1):
     # setup, clean
     current_turn = 1
     for character in character_list:
@@ -150,7 +178,21 @@ while (battleCount < 100):
         print(separatorLineText + "■ターン: " + str(current_turn))
         ##[1] Display Combat infomation
         for character in character_list:
-            print(character.name + " Hp: " + str(character.currentHp) + "/ " + str(character.maxHp))
+            damage_color = ""
+            if(character.currentHp / character.maxHp >= 0.5):
+                damage_color =""
+            elif(character.currentHp / character.maxHp >= 0.2):
+                damage_color = bcolors.yellow
+            else:
+                damage_color = bcolors.red
+
+            bg_color = ''
+            if(character.isAlly):
+                bg_color = bcolors.bg_cyan + bcolors.black
+            else:
+                bg_color = bcolors.bg_orange + bcolors.black
+
+            print(bg_color + character.name + bcolors.endc + " Hp: " + damage_color + str(character.currentHp) + "/ " + str(character.maxHp) + bcolors.endc)
         print("")
 
         ## Clear up chain element in Turn phase
@@ -259,13 +301,30 @@ while (battleCount < 100):
                 if(targetResistStack != 0):
                     battleText += "耐久値(" + str(targetResistStack) + ") "
 
-            elementText = "[" + actorOrder.currentMove.moveElement + "]"
+            color = ""
+            if(actorOrder.currentMove.moveElement == "赤"):
+                color = bcolors.red
+            elif(actorOrder.currentMove.moveElement == "青"):
+                color = bcolors.blue
+            elif(actorOrder.currentMove.moveElement == "黄"):
+                color = bcolors.yellow
+            elif(actorOrder.currentMove.moveElement == "緑"):
+                color = bcolors.green
+
+            elementText = "[" + color + actorOrder.currentMove.moveElement + bcolors.endc + "]"
 
             # for # DEBUG:
             #debugText = " (" + str(turnChainCount.chainRedStack) + "/" + str(turnChainCount.chainBlueStack)+ "/" + str(turnChainCount.chainYellowStack)+ "/" + str(turnChainCount.chainGreenStack) + ")"
 
-            print("  "*actorOrder.chainCount + elementText + " -"+actorOrder.currentMove.name + "- " + actorOrder.actor.name
-            + " -> " + target.name + "  " + battleText + buffText )
+            bg_color = ''
+            if(actorOrder.actor.isAlly):
+                bg_color = bcolors.bg_cyan + bcolors.black
+            else:
+                bg_color = bcolors.bg_orange + bcolors.black
+
+            print("  "*actorOrder.chainCount + elementText +" " + "-" + actorOrder.currentMove.name + "- "
+            + bg_color + actorOrder.actor.name + bcolors.endc + " -> " + target.name
+            + "  " + battleText + buffText  )
 
             #[XX] Result evaluation
             if target.currentHp <= 0:
