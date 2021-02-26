@@ -88,8 +88,23 @@ Pig_BlueCounter1 = MoveClass("防御削り<黄>", False,0,0,1,0,"Global", -1, "�
 
 Pig_Counters = [Pig_RedCounter1, Pig_RedCounter2, Pig_BlueCounter1]
 
-Pig_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
-0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack1 = MoveClass("武技雷迅<赤>", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack2 = MoveClass("武技千烈<赤赤>", False,2,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack3 = MoveClass("武技破岩<赤*3>", False,3,0,0,0,"Self", -3, "赤", "Opponent", "Any",
+0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack4 = MoveClass("武技崩天<赤*4>", False,4,0,0,0,"Self", -4, "赤", "Opponent", "Any",
+0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack5 = MoveClass("武技天舞<赤*5>", False,5,0,0,0,"Self", -5, "赤", "Opponent", "Any",
+0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack6 = MoveClass("武技龍迅<赤*6>", False,6,0,0,0,"Self", -6, "赤", "Opponent", "Any",
+0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack7 = MoveClass("武技虎砲<赤*7>", False,7,0,0,0,"Self", -7, "赤", "Opponent", "Any",
+0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+
+Pig_Reattacks = [Pig_Reattack1, Pig_Reattack2 ,Pig_Reattack3, Pig_Reattack4,
+ Pig_Reattack5, Pig_Reattack6, Pig_Reattack7]
 
 Elder_ActiveMove1 = MoveClass("攻撃中", True,0,0,0,0,"None", -3, "赤", "Opponent", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
@@ -106,9 +121,10 @@ Elder_BlueCounter1 = MoveClass("追加介入<青黄>", False,0,1,1,0,"Opponent",
 
 Elder_Counters = [Elder_RedCounter1, Elder_GreenCounter1, Elder_BlueCounter1]
 
-Elder_PassiveRedReAttack = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+Elder_Reattack1 = MoveClass("再攻撃", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
 0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
+Elder_Reattacks = [Pig_Reattack1]
 
 
 class CharacterClass:
@@ -120,7 +136,7 @@ class CharacterClass:
 
     def __init__(self, name, isAlly:bool, hp:int,
      resistRed:int, resistBlue:int, resistYellow:int, resistGreen:int,
-     activeMove1,activeMove2,activeMove3, passiveReAttack, counters):
+     activeMove1,activeMove2,activeMove3, reattacks, counters):
         self.name = name
         self.isAlly = isAlly
         self.maxHp = hp
@@ -132,15 +148,15 @@ class CharacterClass:
         self.activeMove1 = activeMove1 # Temp
         self.activeMove2 = activeMove2 # Temp
         self.activeMove3 = activeMove3 # Temp
-        self.passiveReAttack = passiveReAttack # Temp; it should be arry.
+        self.reattacks = reattacks # Temp; it should be arry.
         self.counters = counters # Temp; it should be arry.
         #self.currentMove = activeSlots # temp; it is ugly.
 
 # Cast CharacterClass
-Ally1 = CharacterClass("ピグ", True, 20, 1, 0, 0, 0, Pig_ActiveMove1,Pig_ActiveMove2,Pig_ActiveMove3,
- Pig_PassiveRedReAttack, Pig_Counters)
-Enemy1 = CharacterClass("エルダー", False, 30, 0, 0, 0, 0, Elder_ActiveMove1, Elder_ActiveMove2, Elder_ActiveMove3,
- Elder_PassiveRedReAttack, Elder_Counters)
+Ally1 = CharacterClass("ピグ", True, 30, 1, 0, 0, 0, Pig_ActiveMove1,Pig_ActiveMove2,Pig_ActiveMove3,
+ Pig_Reattacks, Pig_Counters)
+Enemy1 = CharacterClass("エルダー", False, 50, 0, 0, 0, 0, Elder_ActiveMove1, Elder_ActiveMove2, Elder_ActiveMove3,
+ Elder_Reattacks, Elder_Counters)
 
 class MoveOrderClass:
     def __init__(self, actor, currentMove, chainCount:int, isInitialMove:bool):
@@ -166,7 +182,7 @@ battleCount = 0
 winCount = 0
 drawCount = 0
 
-while (battleCount < 1):
+while (battleCount < 100):
     # setup, clean
     current_turn = 1
     for character in character_list:
@@ -199,7 +215,8 @@ while (battleCount < 1):
         for character in character_list:
             for counter in character.counters:
                 counter.canMoveInThisTurn = True
-            character.passiveReAttack.canMoveInThisTurn = True
+            for reattack in character.reattacks:
+                reattack.canMoveInThisTurn = True
 
         ##[2] Move Order calculation
         #actionOrderCharacter_list = sorted(character_list, key=lambda CharacterClass: CharacterClass.speed, reverse=True)
@@ -391,20 +408,21 @@ while (battleCount < 1):
 
                 # (3)Self reaction
                 # chainReference = Self should work
-                if(actorCharacter.passiveReAttack.canMoveInThisTurn and actorCharacter.passiveReAttack.isActiveMove == False
-                and actorCharacter.passiveReAttack.chainReference == "Self"
-                and target.passiveReAttack.chainTriggerElementRed <= turnChainCount.chainRedStack
-                and target.passiveReAttack.chainTriggerElementBlue <= turnChainCount.chainBlueStack
-                and target.passiveReAttack.chainTriggerElementYellow <= turnChainCount.chainYellowStack
-                and target.passiveReAttack.chainTriggerElementGreen <= turnChainCount.chainGreenStack
-                ):
-                    if(target.passiveReAttack.canTriggerMultipleInOneTurn == False):
-                        target.passiveReAttack.canMoveInThisTurn = False
-                    if(actorCharacter.passiveReAttack.invocationRate >= random.uniform(0.0, 1.0) ):
-                        reaction = MoveOrderClass(actorCharacter, actorCharacter.passiveReAttack, actorOrder.chainCount + 1, False)
-                        actionOrderList.insert(0, reaction)
-                        # print("再攻撃 発動" + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
-                        break
+                for reattack in actorCharacter.reattacks:
+                    if(reattack.canMoveInThisTurn and reattack.isActiveMove == False
+                    and reattack.chainReference == "Self"
+                    and reattack.chainTriggerElementRed <= turnChainCount.chainRedStack
+                    and reattack.chainTriggerElementBlue <= turnChainCount.chainBlueStack
+                    and reattack.chainTriggerElementYellow <= turnChainCount.chainYellowStack
+                    and reattack.chainTriggerElementGreen <= turnChainCount.chainGreenStack
+                    ):
+                        if(reattack.canTriggerMultipleInOneTurn == False):
+                            reattack.canMoveInThisTurn = False
+                        if(reattack.invocationRate >= random.uniform(0.0, 1.0) ):
+                            reaction = MoveOrderClass(actorCharacter, reattack, actorOrder.chainCount + 1, False)
+                            actionOrderList.insert(0, reaction)
+                            # print("再攻撃 発動" + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
+                            break
                 # Chain can trigger only once in the loop. Unlike Guild Story 2.
                 break
 
