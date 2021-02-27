@@ -79,9 +79,9 @@ Pig_ActiveMove2 = MoveClass("回復", True,0,0,0,0,"None", +3, "緑", "Self", "N
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 Pig_ActiveMove3 = MoveClass("攻撃大", True,0,0,0,0,"None", -5, "赤", "Opponent", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_RedCounter1 = MoveClass("反撃<赤>", False,1,0,0,0,"Opponent", -5, "赤", "Opponent", "Any",
+Pig_RedCounter1 = MoveClass("反撃<赤>", False,1,0,0,0,"Opponent", -3, "赤", "Opponent", "Any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_RedCounter2 = MoveClass("反撃強<赤赤>", False,2,0,0,0,"Opponent", -7, "赤", "Opponent", "Any",
+Pig_RedCounter2 = MoveClass("反撃強<赤赤>", False,2,0,0,0,"Opponent", -5, "赤", "Opponent", "Any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 Pig_BlueCounter1 = MoveClass("防御削り<黄>", False,0,0,1,0,"Global", -1, "青", "Opponent", "Any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
@@ -89,19 +89,19 @@ Pig_BlueCounter1 = MoveClass("防御削り<黄>", False,0,0,1,0,"Global", -1, "�
 Pig_Counters = [Pig_RedCounter1, Pig_RedCounter2, Pig_BlueCounter1]
 
 Pig_Reattack1 = MoveClass("武技雷迅<赤>", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
-0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 Pig_Reattack2 = MoveClass("武技千烈<赤赤>", False,2,0,0,0,"Self", -2, "赤", "Opponent", "Any",
-0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack3 = MoveClass("武技破岩<赤*3>", False,3,0,0,0,"Self", -3, "赤", "Opponent", "Any",
-0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack4 = MoveClass("武技崩天<赤*4>", False,4,0,0,0,"Self", -4, "赤", "Opponent", "Any",
-0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack5 = MoveClass("武技天舞<赤*5>", False,5,0,0,0,"Self", -5, "赤", "Opponent", "Any",
-0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack6 = MoveClass("武技龍迅<赤*6>", False,6,0,0,0,"Self", -6, "赤", "Opponent", "Any",
-0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack7 = MoveClass("武技虎砲<赤*7>", False,7,0,0,0,"Self", -7, "赤", "Opponent", "Any",
-0.5, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack3 = MoveClass("武技破岩<赤*3>", False,3,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack4 = MoveClass("武技崩天<赤*4>", False,4,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack5 = MoveClass("武技天舞<赤*5>", False,5,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack6 = MoveClass("武技龍迅<赤*6>", False,6,0,0,0,"Self", -3, "赤", "Opponent", "Any",
+0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+Pig_Reattack7 = MoveClass("武技虎砲<赤*7>", False,7,0,0,0,"Self", -3, "赤", "Opponent", "Any",
+0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
 Pig_Reattacks = [Pig_Reattack1, Pig_Reattack2 ,Pig_Reattack3, Pig_Reattack4,
  Pig_Reattack5, Pig_Reattack6, Pig_Reattack7]
@@ -112,7 +112,7 @@ Elder_ActiveMove2 = MoveClass("防御", True,0,0,0,0,"none", 0, "黄", "Self", "
 1.0, False, 20, 0,0,0,0,3,0,0,0,0,0,0 )
 Elder_ActiveMove3 = MoveClass("攻撃大", True,0,0,0,0,"none", -5, "赤", "Opponent", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Elder_RedCounter1 = MoveClass("反撃<赤>", False,1,0,0,0,"Opponent", -5, "赤", "Opponent", "Any",
+Elder_RedCounter1 = MoveClass("反撃<赤>", False,1,0,0,0,"Opponent", -3, "赤", "Opponent", "Any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 Elder_GreenCounter1 = MoveClass("回復潰し<青>", False,0,0,0,1,"Global", -2, "青", "Opponent", "Any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
@@ -155,7 +155,7 @@ class CharacterClass:
 # Cast CharacterClass
 Ally1 = CharacterClass("ピグ", True, 30, 1, 0, 0, 0, Pig_ActiveMove1,Pig_ActiveMove2,Pig_ActiveMove3,
  Pig_Reattacks, Pig_Counters)
-Enemy1 = CharacterClass("エルダー", False, 50, 0, 0, 0, 0, Elder_ActiveMove1, Elder_ActiveMove2, Elder_ActiveMove3,
+Enemy1 = CharacterClass("エルダー", False, 40, 0, 0, 0, 0, Elder_ActiveMove1, Elder_ActiveMove2, Elder_ActiveMove3,
  Elder_Reattacks, Elder_Counters)
 
 class MoveOrderClass:
