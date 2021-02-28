@@ -87,7 +87,7 @@ previousMoves = Pig_Moves.copy()
 previousWinRate = 0.0
 
 
-while (generationCount < 300):
+while (generationCount < 30):
 
     for move in Pig_Moves:
         for d in range(3):
@@ -96,7 +96,7 @@ while (generationCount < 300):
     if (previousWinRate > 0.8):
         enemyHp += 1
 
-    Ally1 = masterClass.CharacterClass("ピグ", True, 20, 1, 1, 1, 1, 7, Pig_Moves)
+    Ally1 = masterClass.CharacterClass("ピグ", True, 30, 1, 1, 1, 1, 7, Pig_Moves)
     Enemy1 = masterClass.CharacterClass("エルダー", False, enemyHp, 0, 0, 0, 0, 6, Elder_Moves)
     character_list = [Ally1, Enemy1]
 
@@ -110,7 +110,9 @@ while (generationCount < 300):
         for character in character_list:
             character.currentHp = character.maxHp
             character.resistRedStack = 0
-
+            character.resistBlueStack = 0
+            character.resistYellowStack = 0
+            character.resistGreenStack = 0
 
         while True:
             print(separatorLineText + "■ターン: " + str(current_turn) + " 世代: " + str(generationCount + 1) )
@@ -198,10 +200,39 @@ while (generationCount < 300):
                 if (actorOrder.currentMove.buffDefenceRedStack != 0):
                     if(actorOrder.currentMove.toTarget == "Opponent"):
                         target.resistRedStack += actorOrder.currentMove.buffDefenceRedStack
-                        buffText = "赤耐久変化: " +  str(actorOrder.currentMove.buffDefenceRedStack)
+                        buffText = "赤耐久: " +  str(actorOrder.currentMove.buffDefenceRedStack)
                     elif(actorOrder.currentMove.toTarget == "Self"):
                         actorCharacter.resistRedStack += actorOrder.currentMove.buffDefenceRedStack
-                        buffText = "赤耐久変化: " + str(actorOrder.currentMove.buffDefenceRedStack)
+                        buffText = "赤耐久: " + str(actorOrder.currentMove.buffDefenceRedStack)
+
+                # 青
+                if (actorOrder.currentMove.buffDefenceBlueStack != 0):
+                    if(actorOrder.currentMove.toTarget == "Opponent"):
+                        target.resistBlueStack += actorOrder.currentMove.buffDefenceBlueStack
+                        buffText = "青耐久: " +  str(actorOrder.currentMove.buffDefenceBlueStack)
+                    elif(actorOrder.currentMove.toTarget == "Self"):
+                        actorCharacter.resistBlueStack += actorOrder.currentMove.buffDefenceBlueStack
+                        buffText = "青耐久: " + str(actorOrder.currentMove.buffDefenceBlueStack)
+
+                # 黄
+                if (actorOrder.currentMove.buffDefenceYellowStack != 0):
+                    if(actorOrder.currentMove.toTarget == "Opponent"):
+                        target.resistYellowStack += actorOrder.currentMove.buffDefenceYellowStack
+                        buffText = "黄耐久: " +  str(actorOrder.currentMove.buffDefenceYellowStack)
+                    elif(actorOrder.currentMove.toTarget == "Self"):
+                        actorCharacter.resistYellowStack += actorOrder.currentMove.buffDefenceYellowStack
+                        buffText = "黄耐久: " + str(actorOrder.currentMove.buffDefenceYellowStack)
+
+                # 緑
+                if (actorOrder.currentMove.buffDefenceGreenStack != 0):
+                    if(actorOrder.currentMove.toTarget == "Opponent"):
+                        target.resistGreenStack += actorOrder.currentMove.buffDefenceGreenStack
+                        buffText = "緑耐久: " +  str(actorOrder.currentMove.buffDefenceGreenStack)
+                    elif(actorOrder.currentMove.toTarget == "Self"):
+                        actorCharacter.resistGreenStack += actorOrder.currentMove.buffDefenceGreenStack
+                        buffText = "緑耐久: " + str(actorOrder.currentMove.buffDefenceGreenStack)
+
+
 
                 #[3-2] deal move
                 # deal means, damage or heal to Target
@@ -403,7 +434,7 @@ while (generationCount < 300):
 
         battleCount += 1
 
-    currentWinRate = winCount / battleCount
+    currentWinRate = (winCount + (drawCount / 2) ) / battleCount
 
     # If winrate is below than previous one, back to previous move.
     if(currentWinRate < previousWinRate):
@@ -413,6 +444,11 @@ while (generationCount < 300):
     previousWinRate = currentWinRate
     # str(winCount) + "/" + str(battleCount) + " 引分: " + str(drawCount) +
 
-    winRateText += "<" + str(generationCount) + "> " +str(round(currentWinRate *100 )) + "% ("+ str(drawCount) + ")"
+    slash = ""
+    q, mod = divmod(generationCount, 10)
+    if(9 == mod ):
+        slash = "\n"
+
+    winRateText += str(generationCount) + ": " +str(round(currentWinRate *100 )) + "% " + slash
     generationCount += 1
 print(winRateText)

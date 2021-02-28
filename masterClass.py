@@ -109,34 +109,49 @@ class MoveClass:
                 self.isActiveMove = False
         elif (position == 2):
             try:
-                if(random.randint(0,1) == 1):
+                r = random.randint(0,10)
+                if(r >= 9):
                     self.chainTriggerElementRed += 1
-                else:
+                elif(r <= 2):
                     self.chainTriggerElementRed -= 1
+                else:
+                    self.chainTriggerElementRed += 0
+
             except AttributeError as error:
                 self.chainTriggerElementRed = 0
         elif(position == 3):
             try:
-                if(random.randint(0,1) ==1):
+                r = random.randint(0,10)
+                if(r >= 9):
                     self.chainTriggerElementBlue += 1
-                else:
+                elif(r <= 2):
                     self.chainTriggerElementBlue -= 1
+                else:
+                    self.chainTriggerElementBlue += 0
             except AttributeError as error:
                 self.chainTriggerElementBlue = 0
         elif(position == 4):
             try:
-                if(random.randint(0,1) ==1):
+                r = random.randint(0,10)
+                if(r >= 9):
                     self.chainTriggerElementYellow += 1
-                else:
+                elif(r <= 2):
                     self.chainTriggerElementYellow -= 1
+                else:
+                    self.chainTriggerElementYellow += 0
+
             except AttributeError as error:
                 self.chainTriggerElementYellow = 0
         elif(position == 5):
             try:
-                if(random.randint(0,1) ==1):
+                r = random.randint(0,10)
+                if(r >= 9):
                     self.chainTriggerElementGreen += 1
-                else:
+                elif(r <= 2):
                     self.chainTriggerElementGreen -= 1
+                else:
+                    self.chainTriggerElementGreen += 0
+
             except AttributeError as error:
                 self.chainTriggerElementGreen = 0
 
@@ -188,7 +203,7 @@ class MoveClass:
                 else:
                     self.invocationRate -= 0.01
             except AttributeError as error:
-                self.invocationRate = 0.1 #temp
+                self.invocationRate = 0.5 #temp
         elif(position == 12):
             r = random.randint(0,1)
             if(r == 0):
