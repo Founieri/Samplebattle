@@ -1,6 +1,7 @@
 import random
 import copy
 import masterClass
+from operator import itemgetter, attrgetter
 
 # Cast MoveClass
 Pig_ActiveMove1 = masterClass.MoveClass(False, "攻撃中", True,0,0,0,0,"None", -3, "赤", "Opponent", "None",
@@ -46,7 +47,7 @@ Pig_Moves = []
 number = 1;
 for c in range(10):
     move = masterClass.MoveClass(True)
-    for d in range(1):
+    for d in range(20):
         move.geneticMutate(True)
     # print(move.name)
     Pig_Moves.append(move)
@@ -71,8 +72,8 @@ Elder_Moves = [Elder_ActiveMove1, Elder_ActiveMove2, Elder_ActiveMove3,Elder_Red
  Elder_GreenCounter1, Elder_BlueCounter1, Elder_Reattack1]
 
 # Cast CharacterClass
-Ally1 = masterClass.CharacterClass("ピグ", True, 20, 1, 0, 0, 0,  Pig_Moves)
-Enemy1 = masterClass.CharacterClass("エルダー", False, 20, 0, 0, 0, 0, Elder_Moves)
+Ally1 = masterClass.CharacterClass("ピグ", True, 20, 1, 1, 1, 1, 7, Pig_Moves)
+Enemy1 = masterClass.CharacterClass("エルダー", False, 20, 0, 0, 0, 0, 6, Elder_Moves)
 
 
 character_list = [Ally1, Enemy1]
@@ -86,7 +87,7 @@ battleCount = 0
 winCount = 0
 drawCount = 0
 
-while (battleCount < 1):
+while (battleCount < 100):
     # setup, clean
     current_turn = 1
     for character in character_list:
@@ -126,12 +127,18 @@ while (battleCount < 1):
         #actionOrderCharacter_list = sorted(character_list, key=lambda CharacterClass: CharacterClass.speed, reverse=True)
         actionOrderList = []
 
-        # temp move1
+        tempOrderList =[]
         for character in character_list:
+            delaySpeed = 0
             for move in character.moves:
                 if (move.isActiveMove):
-                    action = masterClass.MoveOrderClass(character, move, 0, True)
-                    actionOrderList.append(action)
+                    moveSpeed = character.speed - delaySpeed
+                    action = masterClass.MoveOrderClass(character, move, 0, True, moveSpeed)
+                    tempOrderList.append(action)
+                    delaySpeed += 2
+        # sorted(actionOrderList, key=lambda character: character.orderSpeed)
+        actionOrderList = sorted(tempOrderList, key=attrgetter('orderSpeed'), reverse=True)
+
 
         # # temp move2
         # for character in character_list:
@@ -169,6 +176,8 @@ while (battleCount < 1):
 
             #[3-1] buff move
             buffText = ""
+
+            # 赤
             if (actorOrder.currentMove.buffDefenceRedStack != 0):
                 if(actorOrder.currentMove.toTarget == "Opponent"):
                     target.resistRedStack += actorOrder.currentMove.buffDefenceRedStack
@@ -183,10 +192,10 @@ while (battleCount < 1):
 
 
             # Offence
+            targetResistValue = 0
+            targetResistStack = 0
             if (actorOrder.currentMove.moveValue < 0):
                 # target resist calculation
-                targetResistValue = 0
-                targetResistStack = 0
                 if (actorOrder.currentMove.moveElement == "赤"):
                     targetResistValue = target.resistRed + target.resistRedStack
                     targetResistStack = target.resistRedStack
@@ -195,11 +204,26 @@ while (battleCount < 1):
                     elif(target.resistRedStack < 0):
                         target.resistRedStack += 1
                 if (actorOrder.currentMove.moveElement == "青"):
-                    targetResistValue = target.resistBlue
+                    targetResistValue = target.resistBlue + target.resistBlueStack
+                    targetResistStack = target.resistBlueStack
+                    if(target.resistBlueStack > 0):
+                        target.resistBlueStack -= 1
+                    elif(target.resistBlueStack < 0):
+                        target.resistBlueStack += 1
                 if (actorOrder.currentMove.moveElement == "黄"):
-                    targetResistValue = target.resistYellow
+                    targetResistValue = target.resistYellow + target.resistYellowStack
+                    targetResistStack = target.resistYellowStack
+                    if(target.resistYellowStack > 0):
+                        target.resistYellowStack -= 1
+                    elif(target.resistYellowStack < 0):
+                        target.resistYellowStack += 1
                 if (actorOrder.currentMove.moveElement == "緑"):
-                    targetResistValue = target.resistGreen
+                    targetResistValue = target.resistGreen + target.resistGreenStack
+                    targetResistStack = target.resistGreenStack
+                    if(target.resistGreenStack > 0):
+                        target.resistGreenStack -= 1
+                    elif(target.resistGreenStack < 0):
+                        target.resistGreenStack += 1
 
                 # calculate dealValue
                 if(actorOrder.currentMove.moveValue + targetResistValue > 0):
@@ -247,7 +271,7 @@ while (battleCount < 1):
 
             print("  "*actorOrder.chainCount + elementText +" " + "-" + actorOrder.currentMove.name + "- "
             + bg_color + actorOrder.actor.name + masterClass.bcolors.endc + " -> " + target.name
-            + "  " + battleText + buffText  )
+            + "  " + battleText + buffText + " (速:" +str(actorOrder.orderSpeed) + ")" )
 
             #[XX] Result evaluation
             if target.currentHp <= 0:
@@ -285,7 +309,7 @@ while (battleCount < 1):
                                 if(counter.canTriggerMultipleInOneTurn == False):
                                     counter.canMoveInThisTurn = False
                                 counter.inBattleMovedCount += 1
-                                reaction = masterClass.MoveOrderClass(target, counter, actorOrder.chainCount +1, False)
+                                reaction = masterClass.MoveOrderClass(target, counter, actorOrder.chainCount +1, False, actorOrder.orderSpeed)
                                 actionOrderList.insert(0,reaction)
                                 # print("反撃　発動: " + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
                                 flag = True
@@ -309,7 +333,7 @@ while (battleCount < 1):
                                     if(counter.canTriggerMultipleInOneTurn == False):
                                         counter.canMoveInThisTurn = False
                                     counter.inBattleMovedCount += 1
-                                    reaction = masterClass.MoveOrderClass(character, counter, actorOrder.chainCount +1, False)
+                                    reaction = masterClass.MoveOrderClass(character, counter, actorOrder.chainCount +1, False, actorOrder.orderSpeed)
                                     actionOrderList.insert(0,reaction)
                                     flag = True
                                     break
@@ -333,7 +357,7 @@ while (battleCount < 1):
                                 reattack.canMoveInThisTurn = False
                             reattack.inBattleMovedCount += 1
                             if(reattack.invocationRate >= random.uniform(0.0, 1.0) ):
-                                reaction = masterClass.MoveOrderClass(actorCharacter, reattack, actorOrder.chainCount + 1, False)
+                                reaction = masterClass.MoveOrderClass(actorCharacter, reattack, actorOrder.chainCount + 1, False, actorOrder.orderSpeed)
                                 actionOrderList.insert(0, reaction)
                                 # print("再攻撃 発動" + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
                                 break

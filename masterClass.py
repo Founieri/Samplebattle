@@ -323,10 +323,13 @@ class CharacterClass:
     chainCount = 0
 
     resistRedStack = 0
+    resistBlueStack = 0
+    resistYellowStack = 0
+    resistGreenStack = 0
 
 
     def __init__(self, name, isAlly:bool, hp:int,
-     resistRed:int, resistBlue:int, resistYellow:int, resistGreen:int, moves):
+     resistRed:int, resistBlue:int, resistYellow:int, resistGreen:int, speed:int, moves):
         self.name = name
         self.isAlly = isAlly
         self.maxHp = hp
@@ -342,13 +345,15 @@ class CharacterClass:
         # self.reattacks = reattacks # Temp; it should be arry.
         # self.counters = counters # Temp; it should be arry.
         #self.currentMove = activeSlots # temp; it is ugly.
+        self.speed = speed
 
 class MoveOrderClass:
-    def __init__(self, actor, currentMove, chainCount:int, isInitialMove:bool):
+    def __init__(self, actor, currentMove, chainCount:int, isInitialMove:bool, orderSpeed:int):
         self.actor = actor
         self.currentMove = currentMove
         self.chainCount = chainCount
         self.isInitialMove = isInitialMove
+        self.orderSpeed = orderSpeed
 
 class TurnChainCountClass:
     chainRedStack = 0
