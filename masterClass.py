@@ -54,7 +54,15 @@ class MoveClass:
             if(self.isActiveMove):
                 isActiveText = "通"
             else:
-                isActiveText = "反"
+                if(self.chainReference == "Opponent"):
+                    isActiveText = "反撃"
+                elif(self.chainReference == "Self"):
+                    isActiveText = "再行動"
+                elif(self.chainReference == "Global"):
+                    isActiveText = "無作為"
+                else:
+                    isActiveText = self.chainReference
+
             self.name = isActiveText + "[" + str(self.moveValue) + str(self.moveElement) + "]"
 
         else:
@@ -180,7 +188,7 @@ class MoveClass:
                 else:
                     self.invocationRate -= 0.01
             except AttributeError as error:
-                self.invocationRate = 1.0 #temp
+                self.invocationRate = 0.1 #temp
         elif(position == 12):
             r = random.randint(0,1)
             if(r == 0):

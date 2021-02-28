@@ -46,7 +46,7 @@ Pig_Reattacks = []
 number = 1;
 for c in range(10):
     move = masterClass.MoveClass(True)
-    for d in range(100):
+    for d in range(1):
         move.geneticMutate(True)
     print(move.name)
     Pig_Reattacks.append(move)
@@ -175,10 +175,10 @@ while (battleCount < 1):
             if (actorOrder.currentMove.buffDefenceRedStack != 0):
                 if(actorOrder.currentMove.toTarget == "Opponent"):
                     target.resistRedStack += actorOrder.currentMove.buffDefenceRedStack
-                    buffText = "耐久弱化: " +  str(actorOrder.currentMove.buffDefenceRedStack)
+                    buffText = "赤耐久変化: " +  str(actorOrder.currentMove.buffDefenceRedStack)
                 elif(actorOrder.currentMove.toTarget == "Self"):
                     actorCharacter.resistRedStack += actorOrder.currentMove.buffDefenceRedStack
-                    buffText = "耐久強化: +" + str(actorOrder.currentMove.buffDefenceRedStack)
+                    buffText = "赤耐久変化: " + str(actorOrder.currentMove.buffDefenceRedStack)
 
             #[3-2] deal move
             # deal means, damage or heal to Target
@@ -268,72 +268,80 @@ while (battleCount < 1):
                 turnChainCount.chainGreenStack += 1
 
             #[3-1] Chain Move evaluation
-            while True:
-                # Priority: (1)Opponent reaction -> (2)Global reaction -> (3)Self reaction
-                # (1) Opponent reaction
-                # chainReference = Opponent should work
-                for counter in target.chainsMoves:
-                    flag = False
-                    if(counter.canMoveInThisTurn and counter.isActiveMove == False
-                    and counter.chainReference == "Opponent"
-                    and counter.chainTriggerElementRed <= turnChainCount.chainRedStack
-                    and counter.chainTriggerElementBlue <= turnChainCount.chainBlueStack
-                    and counter.chainTriggerElementYellow <= turnChainCount.chainYellowStack
-                    and counter.chainTriggerElementGreen <= turnChainCount.chainGreenStack
-                    ):
-                        if(counter.invocationRate >= random.uniform(0.0, 1.0) ):
-                            if(counter.canTriggerMultipleInOneTurn == False):
-                                counter.canMoveInThisTurn = False
-                            reaction = masterClass.MoveOrderClass(target, counter, actorOrder.chainCount +1, False)
-                            actionOrderList.insert(0,reaction)
-                            # print("反撃　発動: " + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
-                            flag = True
-                            break
-                if(flag):
-                    break
 
-                # (2) Global reaciton
-                for character in character_list:
-                    flag = False
-                    for counter in character.chainsMoves:
+            if(actorOrder.chainCount <= 10):
+                while (True):
+                    # Priority: (1)Opponent reaction -> (2)Global reaction -> (3)Self reaction
+                    # (1) Opponent reaction
+                    # chainReference = Opponent should work
+                    for counter in target.chainsMoves:
+                        flag = False
                         if(counter.canMoveInThisTurn and counter.isActiveMove == False
-                        and counter.chainReference == "Global"
+                        and counter.chainReference == "Opponent"
                         and counter.chainTriggerElementRed <= turnChainCount.chainRedStack
                         and counter.chainTriggerElementBlue <= turnChainCount.chainBlueStack
                         and counter.chainTriggerElementYellow <= turnChainCount.chainYellowStack
                         and counter.chainTriggerElementGreen <= turnChainCount.chainGreenStack
+                        and counter.numberOfPossibleMoves >= counter.inBattleMovedCount
                         ):
                             if(counter.invocationRate >= random.uniform(0.0, 1.0) ):
                                 if(counter.canTriggerMultipleInOneTurn == False):
                                     counter.canMoveInThisTurn = False
-                                reaction = masterClass.MoveOrderClass(character, counter, actorOrder.chainCount +1, False)
+                                counter.inBattleMovedCount += 1
+                                reaction = masterClass.MoveOrderClass(target, counter, actorOrder.chainCount +1, False)
                                 actionOrderList.insert(0,reaction)
+                                # print("反撃　発動: " + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
                                 flag = True
+                                break
+                    if(flag):
+                        break
+
+                    # (2) Global reaciton
+                    for character in character_list:
+                        flag = False
+                        for counter in character.chainsMoves:
+                            if(counter.canMoveInThisTurn and counter.isActiveMove == False
+                            and counter.chainReference == "Global"
+                            and counter.chainTriggerElementRed <= turnChainCount.chainRedStack
+                            and counter.chainTriggerElementBlue <= turnChainCount.chainBlueStack
+                            and counter.chainTriggerElementYellow <= turnChainCount.chainYellowStack
+                            and counter.chainTriggerElementGreen <= turnChainCount.chainGreenStack
+                            and counter.numberOfPossibleMoves >= counter.inBattleMovedCount
+                            ):
+                                if(counter.invocationRate >= random.uniform(0.0, 1.0) ):
+                                    if(counter.canTriggerMultipleInOneTurn == False):
+                                        counter.canMoveInThisTurn = False
+                                    counter.inBattleMovedCount += 1
+                                    reaction = masterClass.MoveOrderClass(character, counter, actorOrder.chainCount +1, False)
+                                    actionOrderList.insert(0,reaction)
+                                    flag = True
+                                    break
+                            if(flag):
                                 break
                         if(flag):
                             break
-                if(flag):
-                    break
 
-                # (3)Self reaction
-                # chainReference = Self should work
-                for reattack in actorCharacter.chainsMoves:
-                    if(reattack.canMoveInThisTurn and reattack.isActiveMove == False
-                    and reattack.chainReference == "Self"
-                    and reattack.chainTriggerElementRed <= turnChainCount.chainRedStack
-                    and reattack.chainTriggerElementBlue <= turnChainCount.chainBlueStack
-                    and reattack.chainTriggerElementYellow <= turnChainCount.chainYellowStack
-                    and reattack.chainTriggerElementGreen <= turnChainCount.chainGreenStack
-                    ):
-                        if(reattack.canTriggerMultipleInOneTurn == False):
-                            reattack.canMoveInThisTurn = False
-                        if(reattack.invocationRate >= random.uniform(0.0, 1.0) ):
-                            reaction = masterClass.MoveOrderClass(actorCharacter, reattack, actorOrder.chainCount + 1, False)
-                            actionOrderList.insert(0, reaction)
-                            # print("再攻撃 発動" + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
-                            break
-                # Chain can trigger only once in the loop. Unlike Guild Story 2.
-                break
+                    # (3)Self reaction
+                    # chainReference = Self should work
+                    for reattack in actorCharacter.chainsMoves:
+                        if(reattack.canMoveInThisTurn and reattack.isActiveMove == False
+                        and reattack.chainReference == "Self"
+                        and reattack.chainTriggerElementRed <= turnChainCount.chainRedStack
+                        and reattack.chainTriggerElementBlue <= turnChainCount.chainBlueStack
+                        and reattack.chainTriggerElementYellow <= turnChainCount.chainYellowStack
+                        and reattack.chainTriggerElementGreen <= turnChainCount.chainGreenStack
+                        and reattack.numberOfPossibleMoves >= reattack.inBattleMovedCount
+                        ):
+                            if(reattack.canTriggerMultipleInOneTurn == False):
+                                reattack.canMoveInThisTurn = False
+                            reattack.inBattleMovedCount += 1
+                            if(reattack.invocationRate >= random.uniform(0.0, 1.0) ):
+                                reaction = masterClass.MoveOrderClass(actorCharacter, reattack, actorOrder.chainCount + 1, False)
+                                actionOrderList.insert(0, reaction)
+                                # print("再攻撃 発動" + reaction.actor.name + " chainCount:" + str(reaction.chainCount))
+                                break
+                    # Chain can trigger only once in the loop. Unlike Guild Story 2.
+                    break
 
         #[XX] Result evaluation
         if Enemy1.currentHp <= 0:
@@ -350,8 +358,9 @@ while (battleCount < 1):
 
         ##[6] Clean up, reset for the next turn.
         current_turn += 1
-        # for character in character_list:
-            # character.resistRedStack = 0
+        for character in character_list:
+            for move in character.chainsMoves:
+                move.inBattleMovedCount = 0
 
     battleCount += 1
 
