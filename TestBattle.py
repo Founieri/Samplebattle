@@ -104,7 +104,7 @@ while (generationCount < 30):
     winCount = 0
     drawCount = 0
 
-    while (battleCount < 30):
+    while (battleCount < 10):
         # setup, clean
         current_turn = 1
         for character in character_list:
@@ -200,37 +200,37 @@ while (generationCount < 30):
                 if (actorOrder.currentMove.buffDefenceRedStack != 0):
                     if(actorOrder.currentMove.toTarget == "Opponent"):
                         target.resistRedStack += actorOrder.currentMove.buffDefenceRedStack
-                        buffText = "赤耐久: " +  str(actorOrder.currentMove.buffDefenceRedStack)
+                        buffText += "赤耐久: " +  str(actorOrder.currentMove.buffDefenceRedStack)
                     elif(actorOrder.currentMove.toTarget == "Self"):
                         actorCharacter.resistRedStack += actorOrder.currentMove.buffDefenceRedStack
-                        buffText = "赤耐久: " + str(actorOrder.currentMove.buffDefenceRedStack)
+                        buffText += "赤耐久: " + str(actorOrder.currentMove.buffDefenceRedStack)
 
                 # 青
                 if (actorOrder.currentMove.buffDefenceBlueStack != 0):
                     if(actorOrder.currentMove.toTarget == "Opponent"):
                         target.resistBlueStack += actorOrder.currentMove.buffDefenceBlueStack
-                        buffText = "青耐久: " +  str(actorOrder.currentMove.buffDefenceBlueStack)
+                        buffText += "青耐久: " +  str(actorOrder.currentMove.buffDefenceBlueStack)
                     elif(actorOrder.currentMove.toTarget == "Self"):
                         actorCharacter.resistBlueStack += actorOrder.currentMove.buffDefenceBlueStack
-                        buffText = "青耐久: " + str(actorOrder.currentMove.buffDefenceBlueStack)
+                        buffText += "青耐久: " + str(actorOrder.currentMove.buffDefenceBlueStack)
 
                 # 黄
                 if (actorOrder.currentMove.buffDefenceYellowStack != 0):
                     if(actorOrder.currentMove.toTarget == "Opponent"):
                         target.resistYellowStack += actorOrder.currentMove.buffDefenceYellowStack
-                        buffText = "黄耐久: " +  str(actorOrder.currentMove.buffDefenceYellowStack)
+                        buffText += "黄耐久: " +  str(actorOrder.currentMove.buffDefenceYellowStack)
                     elif(actorOrder.currentMove.toTarget == "Self"):
                         actorCharacter.resistYellowStack += actorOrder.currentMove.buffDefenceYellowStack
-                        buffText = "黄耐久: " + str(actorOrder.currentMove.buffDefenceYellowStack)
+                        buffText += "黄耐久: " + str(actorOrder.currentMove.buffDefenceYellowStack)
 
                 # 緑
                 if (actorOrder.currentMove.buffDefenceGreenStack != 0):
                     if(actorOrder.currentMove.toTarget == "Opponent"):
                         target.resistGreenStack += actorOrder.currentMove.buffDefenceGreenStack
-                        buffText = "緑耐久: " +  str(actorOrder.currentMove.buffDefenceGreenStack)
+                        buffText += "緑耐久: " +  str(actorOrder.currentMove.buffDefenceGreenStack)
                     elif(actorOrder.currentMove.toTarget == "Self"):
                         actorCharacter.resistGreenStack += actorOrder.currentMove.buffDefenceGreenStack
-                        buffText = "緑耐久: " + str(actorOrder.currentMove.buffDefenceGreenStack)
+                        buffText += "緑耐久: " + str(actorOrder.currentMove.buffDefenceGreenStack)
 
 
 
@@ -285,6 +285,11 @@ while (generationCount < 30):
 
 
                 target.currentHp += dealValue
+
+                # check over heal
+                if(target.currentHp > target.maxHp):
+                    target.currentHp = target.maxHp
+
                 battleText = ""
                 if (actorOrder.currentMove.moveValue != 0):
                     if(dealValue < 0):

@@ -156,15 +156,15 @@ class MoveClass:
                 self.chainTriggerElementGreen = 0
 
         elif(position == 6):
-            r = random.randint(0,3)
+            r = random.randint(0,2)
             if(r == 0):
-                self.chainReference = "none"
+                self.chainReference = "Self"
             elif(r == 1):
                 self.chainReference = "Opponent"
             elif(r == 2):
                 self.chainReference = "Global"
-            elif(r == 3):
-                self.chainReference = "Self"
+            # elif(r == 3):
+            #     self.chainReference = "Self"
         elif(position == 7):
             try:
                 if(random.randint(0,1) ==1):
@@ -190,11 +190,12 @@ class MoveClass:
             else:
                 self.toTarget = "Opponent"
         elif(position == 10):
-            r = random.randint(0,1)
-            if(r == 0):
-                self.whatTrigger = "None"
-            else:
-                self.whatTrigger = "Any"
+            self.whatTrigger = "Any"
+            # r = random.randint(0,1)
+            # if(r == 0):
+            #     self.whatTrigger = "None"
+            # else:
+            #     self.whatTrigger = "Any"
         elif(position == 11):
             try:
                 r = random.randint(0,1)
