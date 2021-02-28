@@ -9,45 +9,47 @@ Pig_ActiveMove2 = masterClass.MoveClass(False,"回復", True,0,0,0,0,"None", +3,
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 Pig_ActiveMove3 = masterClass.MoveClass(False,"攻撃大", True,0,0,0,0,"None", -5, "赤", "Opponent", "None",
 1.0, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_RedCounter1 = masterClass.MoveClass(False,"反撃<赤>", False,1,0,0,0,"Opponent", -3, "赤", "Opponent", "Any",
-0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_RedCounter2 = masterClass.MoveClass(False,"反撃強<赤赤>", False,2,0,0,0,"Opponent", -5, "赤", "Opponent", "Any",
-0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_BlueCounter1 = masterClass.MoveClass(False,"防御削り<黄>", False,0,0,1,0,"Global", -1, "青", "Opponent", "Any",
-0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+# Pig_RedCounter1 = masterClass.MoveClass(False,"反撃<赤>", False,1,0,0,0,"Opponent", -3, "赤", "Opponent", "Any",
+# 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+# Pig_RedCounter2 = masterClass.MoveClass(False,"反撃強<赤赤>", False,2,0,0,0,"Opponent", -5, "赤", "Opponent", "Any",
+# 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+# Pig_BlueCounter1 = masterClass.MoveClass(False,"防御削り<黄>", False,0,0,1,0,"Global", -1, "青", "Opponent", "Any",
+# 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+#
+# Pig_Counters = [Pig_RedCounter1, Pig_RedCounter2, Pig_BlueCounter1]
 
-Pig_Counters = [Pig_RedCounter1, Pig_RedCounter2, Pig_BlueCounter1]
+# CsvMove1 = [False,'CsvMove1', False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+# 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 ]
 
-CsvMove1 = [False,'CsvMove1', False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
-0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 ]
+# CsvMoveSets = [CsvMove1, CsvMove1]
 
-CsvMoveSets = [CsvMove1, CsvMove1]
-
-Pig_Reattack1 = masterClass.MoveClass(False,"武技雷迅<赤>", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
-0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack2 = masterClass.MoveClass(False,"武技千烈<赤赤>", False,2,0,0,0,"Self", -2, "赤", "Opponent", "Any",
-0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack3 = masterClass.MoveClass(False,"武技破岩<赤*3>", False,3,0,0,0,"Self", -2, "赤", "Opponent", "Any",
-0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack4 = masterClass.MoveClass(False,"武技崩天<赤*4>", False,4,0,0,0,"Self", -2, "赤", "Opponent", "Any",
-0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack5 = masterClass.MoveClass(False,"武技天舞<赤*5>", False,5,0,0,0,"Self", -2, "赤", "Opponent", "Any",
-0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack6 = masterClass.MoveClass(False,"武技龍迅<赤*6>", False,6,0,0,0,"Self", -3, "赤", "Opponent", "Any",
-0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-Pig_Reattack7 = masterClass.MoveClass(False,"武技虎砲<赤*7>", False,7,0,0,0,"Self", -3, "赤", "Opponent", "Any",
-0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+# Pig_Reattack1 = masterClass.MoveClass(False,"武技雷迅<赤>", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+# 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+# Pig_Reattack2 = masterClass.MoveClass(False,"武技千烈<赤赤>", False,2,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+# 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+# Pig_Reattack3 = masterClass.MoveClass(False,"武技破岩<赤*3>", False,3,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+# 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+# Pig_Reattack4 = masterClass.MoveClass(False,"武技崩天<赤*4>", False,4,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+# 0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+# Pig_Reattack5 = masterClass.MoveClass(False,"武技天舞<赤*5>", False,5,0,0,0,"Self", -2, "赤", "Opponent", "Any",
+# 0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+# Pig_Reattack6 = masterClass.MoveClass(False,"武技龍迅<赤*6>", False,6,0,0,0,"Self", -3, "赤", "Opponent", "Any",
+# 0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
+# Pig_Reattack7 = masterClass.MoveClass(False,"武技虎砲<赤*7>", False,7,0,0,0,"Self", -3, "赤", "Opponent", "Any",
+# 0.2, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
 
-Pig_Reattacks = [Pig_Reattack1, Pig_Reattack2 ,Pig_Reattack3, Pig_Reattack4,
- Pig_Reattack5, Pig_Reattack6, Pig_Reattack7]
+# Pig_Reattacks = [Pig_Reattack1, Pig_Reattack2 ,Pig_Reattack3, Pig_Reattack4,
+ # Pig_Reattack5, Pig_Reattack6, Pig_Reattack7]
 
+Pig_Reattacks = []
 number = 1;
 for c in range(10):
     move = masterClass.MoveClass(True)
-    move.geneticMutate(True)
-    Pig_Reattacks.append(move)
+    for d in range(100):
+        move.geneticMutate(True)
     print(move.name)
+    Pig_Reattacks.append(move)
     number += 1
 
 Elder_ActiveMove1 = masterClass.MoveClass(False,"攻撃中", True,0,0,0,0,"None", -3, "赤", "Opponent", "None",
@@ -68,14 +70,14 @@ Elder_Counters = [Elder_RedCounter1, Elder_GreenCounter1, Elder_BlueCounter1]
 Elder_Reattack1 = masterClass.MoveClass(False,"再攻撃", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
 0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
-Elder_Reattacks = [Pig_Reattack1]
+Elder_Reattacks = [Elder_Reattack1]
 
 
 # Cast CharacterClass
 Ally1 = masterClass.CharacterClass("ピグ", True, 30, 1, 0, 0, 0, Pig_ActiveMove1,Pig_ActiveMove2,Pig_ActiveMove3,
- Pig_Reattacks, Pig_Counters)
+ Pig_Reattacks)
 Enemy1 = masterClass.CharacterClass("エルダー", False, 40, 0, 0, 0, 0, Elder_ActiveMove1, Elder_ActiveMove2, Elder_ActiveMove3,
- Elder_Reattacks, Elder_Counters)
+ Elder_Reattacks)
 
 
 character_list = [Ally1, Enemy1]
@@ -120,10 +122,10 @@ while (battleCount < 1):
 
         ## Clear up chain element in Turn phase
         for character in character_list:
-            for counter in character.counters:
-                counter.canMoveInThisTurn = True
-            for reattack in character.reattacks:
-                reattack.canMoveInThisTurn = True
+            for chain in character.chainsMoves:
+                chain.canMoveInThisTurn = True
+            # for reattack in character.reattacks:
+            #     reattack.canMoveInThisTurn = True
 
         ##[2] Move Order calculation
         #actionOrderCharacter_list = sorted(character_list, key=lambda CharacterClass: CharacterClass.speed, reverse=True)
@@ -270,7 +272,7 @@ while (battleCount < 1):
                 # Priority: (1)Opponent reaction -> (2)Global reaction -> (3)Self reaction
                 # (1) Opponent reaction
                 # chainReference = Opponent should work
-                for counter in target.counters:
+                for counter in target.chainsMoves:
                     flag = False
                     if(counter.canMoveInThisTurn and counter.isActiveMove == False
                     and counter.chainReference == "Opponent"
@@ -293,7 +295,7 @@ while (battleCount < 1):
                 # (2) Global reaciton
                 for character in character_list:
                     flag = False
-                    for counter in character.counters:
+                    for counter in character.chainsMoves:
                         if(counter.canMoveInThisTurn and counter.isActiveMove == False
                         and counter.chainReference == "Global"
                         and counter.chainTriggerElementRed <= turnChainCount.chainRedStack
@@ -315,7 +317,7 @@ while (battleCount < 1):
 
                 # (3)Self reaction
                 # chainReference = Self should work
-                for reattack in actorCharacter.reattacks:
+                for reattack in actorCharacter.chainsMoves:
                     if(reattack.canMoveInThisTurn and reattack.isActiveMove == False
                     and reattack.chainReference == "Self"
                     and reattack.chainTriggerElementRed <= turnChainCount.chainRedStack

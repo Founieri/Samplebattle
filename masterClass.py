@@ -133,13 +133,15 @@ class MoveClass:
                 self.chainTriggerElementGreen = 0
 
         elif(position == 6):
-            r = random.randint(0,2)
+            r = random.randint(0,3)
             if(r == 0):
-                self.chainReference = "None"
+                self.chainReference = "none"
             elif(r == 1):
                 self.chainReference = "Opponent"
             elif(r == 2):
                 self.chainReference = "Global"
+            elif(r == 3):
+                self.chainReference = "Self"
         elif(position == 7):
             try:
                 if(random.randint(0,1) ==1):
@@ -178,7 +180,7 @@ class MoveClass:
                 else:
                     self.invocationRate -= 0.01
             except AttributeError as error:
-                self.invocationRate = 0.1
+                self.invocationRate = 1.0 #temp
         elif(position == 12):
             r = random.randint(0,1)
             if(r == 0):
@@ -297,6 +299,16 @@ class MoveClass:
             except AttributeError as error:
                 self.buffSpeedStack = 0
 
+        isActiveText = ""
+        try:
+            if(self.isActiveMove):
+                isActiveText = "通"
+            else:
+                isActiveText = "反"
+            self.name = isActiveText + "[" + str(self.moveValue) + str(self.moveElement) + "]"
+        except AttributeError as error:
+            self.name = "null"
+
 
 class CharacterClass:
     isAlly = False
@@ -307,7 +319,7 @@ class CharacterClass:
 
     def __init__(self, name, isAlly:bool, hp:int,
      resistRed:int, resistBlue:int, resistYellow:int, resistGreen:int,
-     activeMove1,activeMove2,activeMove3, reattacks, counters):
+     activeMove1,activeMove2,activeMove3, chainsMoves):
         self.name = name
         self.isAlly = isAlly
         self.maxHp = hp
@@ -319,8 +331,9 @@ class CharacterClass:
         self.activeMove1 = activeMove1 # Temp
         self.activeMove2 = activeMove2 # Temp
         self.activeMove3 = activeMove3 # Temp
-        self.reattacks = reattacks # Temp; it should be arry.
-        self.counters = counters # Temp; it should be arry.
+        self.chainsMoves = chainsMoves
+        # self.reattacks = reattacks # Temp; it should be arry.
+        # self.counters = counters # Temp; it should be arry.
         #self.currentMove = activeSlots # temp; it is ugly.
 
 class MoveOrderClass:
