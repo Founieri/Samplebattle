@@ -42,14 +42,14 @@ Pig_ActiveMove3 = masterClass.MoveClass(False,"攻撃大", True,0,0,0,0,"None", 
 # Pig_Reattacks = [Pig_Reattack1, Pig_Reattack2 ,Pig_Reattack3, Pig_Reattack4,
  # Pig_Reattack5, Pig_Reattack6, Pig_Reattack7]
 
-Pig_Reattacks = []
+Pig_Moves = []
 number = 1;
 for c in range(10):
     move = masterClass.MoveClass(True)
     for d in range(1):
         move.geneticMutate(True)
-    print(move.name)
-    Pig_Reattacks.append(move)
+    # print(move.name)
+    Pig_Moves.append(move)
     number += 1
 
 Elder_ActiveMove1 = masterClass.MoveClass(False,"攻撃中", True,0,0,0,0,"None", -3, "赤", "Opponent", "None",
@@ -64,20 +64,15 @@ Elder_GreenCounter1 = masterClass.MoveClass(False,"回復潰し<青>", False,0,0
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 Elder_BlueCounter1 = masterClass.MoveClass(False,"追加介入<青黄>", False,0,1,1,0,"Opponent", -3, "青", "Opponent", "Any",
 0.3, False, 20, 0,0,0,0,0,0,0,0,0,0,0 )
-
-Elder_Counters = [Elder_RedCounter1, Elder_GreenCounter1, Elder_BlueCounter1]
-
 Elder_Reattack1 = masterClass.MoveClass(False,"再攻撃", False,1,0,0,0,"Self", -2, "赤", "Opponent", "Any",
 0.3, True, 20, 0,0,0,0,0,0,0,0,0,0,0 )
 
-Elder_Reattacks = [Elder_Reattack1]
-
+Elder_Moves = [Elder_ActiveMove1, Elder_ActiveMove2, Elder_ActiveMove3,Elder_RedCounter1,
+ Elder_GreenCounter1, Elder_BlueCounter1, Elder_Reattack1]
 
 # Cast CharacterClass
-Ally1 = masterClass.CharacterClass("ピグ", True, 30, 1, 0, 0, 0, Pig_ActiveMove1,Pig_ActiveMove2,Pig_ActiveMove3,
- Pig_Reattacks)
-Enemy1 = masterClass.CharacterClass("エルダー", False, 40, 0, 0, 0, 0, Elder_ActiveMove1, Elder_ActiveMove2, Elder_ActiveMove3,
- Elder_Reattacks)
+Ally1 = masterClass.CharacterClass("ピグ", True, 20, 1, 0, 0, 0,  Pig_Moves)
+Enemy1 = masterClass.CharacterClass("エルダー", False, 20, 0, 0, 0, 0, Elder_Moves)
 
 
 character_list = [Ally1, Enemy1]
@@ -122,7 +117,7 @@ while (battleCount < 1):
 
         ## Clear up chain element in Turn phase
         for character in character_list:
-            for chain in character.chainsMoves:
+            for chain in character.moves:
                 chain.canMoveInThisTurn = True
             # for reattack in character.reattacks:
             #     reattack.canMoveInThisTurn = True
@@ -133,18 +128,20 @@ while (battleCount < 1):
 
         # temp move1
         for character in character_list:
-            action = masterClass.MoveOrderClass(character, character.activeMove1, 0, True)
-            actionOrderList.append(action)
+            for move in character.moves:
+                if (move.isActiveMove):
+                    action = masterClass.MoveOrderClass(character, move, 0, True)
+                    actionOrderList.append(action)
 
-        # temp move2
-        for character in character_list:
-            action = masterClass.MoveOrderClass(character, character.activeMove2, 0, True)
-            actionOrderList.append(action)
-
-        # temp move3
-        for character in character_list:
-            action = masterClass.MoveOrderClass(character, character.activeMove3, 0, True)
-            actionOrderList.append(action)
+        # # temp move2
+        # for character in character_list:
+        #     action = masterClass.MoveOrderClass(character, character.activeMove2, 0, True)
+        #     actionOrderList.append(action)
+        #
+        # # temp move3
+        # for character in character_list:
+        #     action = masterClass.MoveOrderClass(character, character.activeMove3, 0, True)
+        #     actionOrderList.append(action)
 
         ##[3]Move per character
         #for character in actionOrderCharacter_list:
@@ -274,7 +271,7 @@ while (battleCount < 1):
                     # Priority: (1)Opponent reaction -> (2)Global reaction -> (3)Self reaction
                     # (1) Opponent reaction
                     # chainReference = Opponent should work
-                    for counter in target.chainsMoves:
+                    for counter in target.moves:
                         flag = False
                         if(counter.canMoveInThisTurn and counter.isActiveMove == False
                         and counter.chainReference == "Opponent"
@@ -299,7 +296,7 @@ while (battleCount < 1):
                     # (2) Global reaciton
                     for character in character_list:
                         flag = False
-                        for counter in character.chainsMoves:
+                        for counter in character.moves:
                             if(counter.canMoveInThisTurn and counter.isActiveMove == False
                             and counter.chainReference == "Global"
                             and counter.chainTriggerElementRed <= turnChainCount.chainRedStack
@@ -323,7 +320,7 @@ while (battleCount < 1):
 
                     # (3)Self reaction
                     # chainReference = Self should work
-                    for reattack in actorCharacter.chainsMoves:
+                    for reattack in actorCharacter.moves:
                         if(reattack.canMoveInThisTurn and reattack.isActiveMove == False
                         and reattack.chainReference == "Self"
                         and reattack.chainTriggerElementRed <= turnChainCount.chainRedStack
@@ -359,7 +356,7 @@ while (battleCount < 1):
         ##[6] Clean up, reset for the next turn.
         current_turn += 1
         for character in character_list:
-            for move in character.chainsMoves:
+            for move in character.moves:
                 move.inBattleMovedCount = 0
 
     battleCount += 1

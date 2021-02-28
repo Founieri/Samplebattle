@@ -326,8 +326,7 @@ class CharacterClass:
 
 
     def __init__(self, name, isAlly:bool, hp:int,
-     resistRed:int, resistBlue:int, resistYellow:int, resistGreen:int,
-     activeMove1,activeMove2,activeMove3, chainsMoves):
+     resistRed:int, resistBlue:int, resistYellow:int, resistGreen:int, moves):
         self.name = name
         self.isAlly = isAlly
         self.maxHp = hp
@@ -336,10 +335,10 @@ class CharacterClass:
         self.resistBlue = resistBlue
         self.resistYellow = resistYellow
         self.resistGreen = resistGreen
-        self.activeMove1 = activeMove1 # Temp
-        self.activeMove2 = activeMove2 # Temp
-        self.activeMove3 = activeMove3 # Temp
-        self.chainsMoves = chainsMoves
+        # self.activeMove1 = activeMove1 # Temp
+        # self.activeMove2 = activeMove2 # Temp
+        # self.activeMove3 = activeMove3 # Temp
+        self.moves = moves
         # self.reattacks = reattacks # Temp; it should be arry.
         # self.counters = counters # Temp; it should be arry.
         #self.currentMove = activeSlots # temp; it is ugly.
